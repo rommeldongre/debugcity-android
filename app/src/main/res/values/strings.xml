@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">DBCT1.0</string>
+    <string name="adminButton">Admin</string>
+    <string name="button_addIncident">Add</string>
+    <string name="button_addCategory">Add</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="key_id">ID</string>
+    <string name="key_latitude">LATITUDE</string>
+    <string name="key_longitude">LONGITUDE</string>
+    <string name="key_category">CATEGORY</string>
+    <string name="key_name">NAME</string>
+    <string name="key_description">DESCRIPTION</string>
+    <string name="title_activity_admin_menu">AdminMenu</string>
+    <string name="title_activity_incident_list">IncidentList</string>
+    <string name="title_activity_category_list">CategoryList</string>
+    <string name="delete">DELETE</string>
+    <string name="save">SAVE</string>
+    <string name="edit">EDIT</string>
+    <string name="reset">RESET</string>
+    <string name="refresh">REFRESH</string>
+    <string name="title_activity_incident_details">IncidentDetails</string>
+    <string name="title_activity_category_details">CategoryDetails</string>
+    <string name="title_activity_incident_add">IncidentAdd</string>
+    <string name="title_activity_category_add">CategoryAdd</string>
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.greylabs.sumod.dbct10" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AdminMenu"
+            android:label="@string/title_activity_admin_menu" >
+        </activity>
+        <activity
+            android:name=".IncidentList"
+            android:label="@string/title_activity_incident_list" >
+        </activity>
+        <activity
+            android:name=".CategoryList"
+            android:label="@string/title_activity_category_list" >
+        </activity>
+        <activity
+            android:name=".IncidentDetails"
+            android:label="@string/title_activity_incident_details" >
+        </activity>
+        <activity
+            android:name=".CategoryDetails"
+            android:label="@string/title_activity_category_details" >
+        </activity>
+        <activity
+            android:name=".IncidentAdd"
+            android:label="@string/title_activity_incident_add" >
+        </activity>
+        <activity
+            android:name=".CategoryAdd"
+            android:label="@string/title_activity_category_add" >
+        </activity>
+    </application>
+
+</manifest>
