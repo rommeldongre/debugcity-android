@@ -15,12 +15,15 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class IncidentList extends Activity {
     DBHandler db;
+    TextView incident_id;
 
     public void IncidentList(){
 
@@ -120,15 +123,20 @@ public class IncidentList extends Activity {
         ArrayList<HashMap<String, String>> incidentList =  db.getIncidentList();
         ListView incidentlistview = (ListView) findViewById(R.id.incidentlistview);
         ListAdapter adapter = new SimpleAdapter( IncidentList.this, incidentList, R.layout.incident_list_item,
-                new String[] { "latitude","longitude","category"},
-                new int[] {R.id.incident_latitude, R.id.incident_longitude, R.id.incident_category});
+                new String[] {"id", "latitude","longitude","category"},
+                new int[] {R.id.incident_id, R.id.incident_latitude, R.id.incident_longitude, R.id.incident_category});
         incidentlistview.setAdapter(adapter);
         incidentlistview.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent i = new Intent(IncidentList.this, IncidentDetails.class);
-                        startActivity(i);
+
+                        incident_id = (TextView) view.findViewById(R.id.incident_id);
+                        String incidentId = incident_id.getText().toString();
+                        Intent objIntent = new Intent(getApplicationContext(),IncidentDetails.class);
+                        objIntent.putExtra("incident_id", Integer.parseInt(incidentId));
+                        startActivity(objIntent);
+
                     }
                 }
         );

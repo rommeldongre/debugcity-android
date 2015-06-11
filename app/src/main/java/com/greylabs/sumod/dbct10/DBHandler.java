@@ -125,27 +125,37 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //Reading a row:
 
-    public Incident getIncident(int _id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+    public Incident getIncident(int _id, Context context) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT ID, LATITUDE, LONGITUDE, CATEGORY FROM INCIDENTS WHERE ID =?";
 
-        Cursor cursor = db.query(TABLE_INCIDENTS, new String[]{KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_CATEGORY,}, KEY_ID + "=?",
-                new String[]{String.valueOf(_id)}, null, null, null, null);
-
-
-        Incident incident = new Incident(cursor.getInt(0), cursor.getDouble(1), cursor.getDouble(2), cursor.getString(3));
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(_id)});
+            //ShowAlert("Cursor count:", String.valueOf(cursor.getCount()), context);
+            cursor.moveToFirst();
+        Incident incident = new Incident(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
+                cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)), cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+        cursor.close();
+        db.close();
         return incident;
-
     }
 
-    public Category getCategory(String NAME) {
-        SQLiteDatabase db = this.getReadableDatabase();
+    public Category getCategory(String category_name, Context context) {
 
-        Cursor cursor = db.query(true, TABLE_CATEGORY, new String[]{KEY_NAME, KEY_DESCRIPTION}, KEY_NAME + "=?", new String[]{NAME}, null, null, null, null);
-
-        if (cursor != null)
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT NAME, DESCRIPTION FROM CATEGORY WHERE NAME =?";
+            String[] arg = new String[]{category_name};
+            //ShowAlert("Exception Caught", category_name, context);
+            Cursor cursor = db.rawQuery(query, arg);
             cursor.moveToFirst();
 
-        Category category = new Category(cursor.getString(0), cursor.getString(1));
+
+
+        Category category = new Category(cursor.getString(cursor.getColumnIndex(KEY_NAME)),
+                cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+        cursor.close();
+        db.close();
+        //Category category = new Category("general", "gen");
         return category;
     }
 
@@ -154,6 +164,7 @@ public class DBHandler extends SQLiteOpenHelper {
         //Open connection to read only
         SQLiteDatabase db = getReadableDatabase();
         String selectQuery = "SELECT  " +
+                KEY_ID + "," +
                 KEY_LATITUDE + "," +
                 KEY_LONGITUDE + "," +
                 KEY_CATEGORY +
@@ -167,6 +178,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> incident = new HashMap<String, String>();
+                incident.put("id", cursor.getString(cursor.getColumnIndex(KEY_ID)));//new
                 incident.put("latitude", cursor.getString(cursor.getColumnIndex(KEY_LATITUDE)));
                 incident.put("longitude", cursor.getString(cursor.getColumnIndex(KEY_LONGITUDE)));
                 incident.put("category", cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));

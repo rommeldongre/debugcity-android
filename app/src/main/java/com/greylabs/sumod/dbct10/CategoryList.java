@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 
 public class CategoryList extends Activity {
     DBHandler db;
-
+    TextView category_name;
     public void gotoCategoryAdd(View view){
         Intent i = new Intent(this, CategoryAdd.class);
         startActivity(i);
@@ -76,8 +77,11 @@ public class CategoryList extends Activity {
                     new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent i = new Intent(CategoryList.this, CategoryDetails.class);
-                            startActivity(i);
+                            category_name = (TextView) view.findViewById(R.id.category_name);
+                            String categoryname = category_name.getText().toString();
+                            Intent objIntent = new Intent(getApplicationContext(),CategoryDetails.class);
+                            objIntent.putExtra("category_name", categoryname);
+                            startActivity(objIntent);
                         }
                     }
             );
