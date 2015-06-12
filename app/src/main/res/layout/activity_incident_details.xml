@@ -13,46 +13,27 @@
         android:text="@string/key_latitude"
         android:id="@+id/inc_key_lat_view"
         android:layout_alignParentStart="true"
-        android:paddingBottom="30dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/inc_lat_view" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/key_longitude"
         android:id="@+id/inc_key_long_view"
-        android:layout_below="@+id/inc_key_lat_view"
         android:layout_alignParentStart="true"
-        android:paddingBottom="30dp"
-        android:paddingRight="10dp"/>
+        android:paddingRight="20dp"
+        android:layout_alignTop="@+id/inc_long_view"
+        android:layout_alignBottom="@+id/inc_long_view" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/key_category"
         android:id="@+id/inc_key_cat_view"
-        android:layout_below="@+id/inc_key_long_view"
         android:layout_alignParentStart="true"
-        android:paddingBottom="30dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/inc_lat_view"
-        android:paddingBottom="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/inc_key_long_view" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/inc_long_view"
-        android:paddingBottom="30dp"
-        android:layout_below="@+id/inc_lat_view"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/inc_key_long_view" />
+        android:layout_alignTop="@+id/inc_cat_view"
+        android:layout_alignBottom="@+id/inc_cat_view" />
 
     <Button
         android:layout_width="wrap_content"
@@ -68,15 +49,38 @@
         android:layout_height="wrap_content"
         android:text="@string/edit"
         android:id="@+id/button_edit_incident"
+        android:onClick="buttonEditIncident"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
-    <TextView
+
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text=""
+        android:inputType="numberDecimal"
+        android:id="@+id/inc_lat_view"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/inc_key_long_view" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:inputType="numberDecimal"
+        android:id="@+id/inc_long_view"
+        android:layout_below="@+id/inc_lat_view"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/inc_key_long_view" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:inputType="text"
         android:id="@+id/inc_cat_view"
-        android:paddingBottom="30dp"
         android:layout_below="@+id/inc_long_view"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/inc_key_long_view" />

@@ -4,15 +4,16 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 
-public class AdminMenu extends Activity {
+public class AdminMenu extends ActionBarActivity {
     DBHandler db;
 
     public void buttonResetDatabase(View view){
@@ -63,7 +64,7 @@ public class AdminMenu extends Activity {
     }
 
     public void ShowAlert(String title, String message, String button){
-        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
+        AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.setButton(button, new DialogInterface.OnClickListener() {

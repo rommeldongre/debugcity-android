@@ -16,12 +16,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class IncidentList extends Activity {
+public class IncidentList extends ActionBarActivity {
     DBHandler db;
     TextView incident_id;
 

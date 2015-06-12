@@ -26,6 +26,23 @@
         android:paddingBottom="30dp"
         android:paddingRight="10dp"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete"
+        android:onClick="buttonDeleteCategory"
+        android:id="@+id/button_delete_category"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit"
+        android:id="@+id/button_edit_category"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,21 +63,6 @@
         android:paddingBottom="30dp"
         android:layout_toEndOf="@+id/cat_key_desc_view" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete"
-        android:onClick="buttonDeleteCategory"
-        android:id="@+id/button_delete_category"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/edit"
-        android:id="@+id/button_edit_category"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

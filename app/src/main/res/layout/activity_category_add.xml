@@ -38,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/cat_name_editTextView"
+        android:inputType="text"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/cat_key_desc_view" />
@@ -46,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/cat_desc_editTextView"
+        android:inputType="text"
         android:layout_below="@+id/cat_name_editTextView"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/cat_key_desc_view" />

@@ -1,8 +1,11 @@
 package com.greylabs.sumod.dbct10;
 
+import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class CategoryDetails extends ActionBarActivity {
+public class CategoryDetails extends ActionBarActivity{
 
     DBHandler db;
     CategoryList list;
@@ -20,6 +23,12 @@ public class CategoryDetails extends ActionBarActivity {
         String category_name = intent.getStringExtra("category_name");
         db.deleteCategory(category_name);
         Toast.makeText(this, "DELETED!", Toast.LENGTH_LONG).show();
+
+        TextView cat_name_view = (TextView) findViewById(R.id.cat_name_view);
+        TextView cat_desc_view = (TextView) findViewById(R.id.cat_desc_view);
+
+        cat_name_view.setText("");
+        cat_desc_view.setText("");
     }
 
     @Override

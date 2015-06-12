@@ -5,15 +5,21 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="New Text"
         android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:textSize="@dimen/abc_text_size_medium_material"
         android:id="@+id/category_name" />
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="New Text"
         android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:textSize="@dimen/abc_text_size_medium_material"
         android:id="@+id/category_description" />
 </LinearLayout>
