@@ -95,8 +95,7 @@ public class IncidentDetails extends AppCompatActivity {
                         inc_long_view.setText("");
                         inc_cat_view.setText("");
 
-                        Intent i = new Intent(IncidentDetails.this, IncidentList.class);
-                        startActivity(i);
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

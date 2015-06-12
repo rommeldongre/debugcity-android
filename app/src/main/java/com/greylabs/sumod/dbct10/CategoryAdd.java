@@ -38,8 +38,7 @@ public class CategoryAdd extends AppCompatActivity {
                         cat_name_editTextView.setText("");
                         cat_desc_editTextView.setText("");
 
-                        Intent i = new Intent(CategoryAdd.this, CategoryList.class);
-                        startActivity(i);
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

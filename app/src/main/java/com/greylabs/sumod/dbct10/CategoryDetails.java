@@ -69,8 +69,8 @@ public class CategoryDetails extends AppCompatActivity{
 
 
         new AlertDialog.Builder(this)
-                .setTitle("Reset Databases")
-                .setMessage("Delete entire Database?")
+                .setTitle("Delete")
+                .setMessage("Delete this entry?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
@@ -86,8 +86,7 @@ public class CategoryDetails extends AppCompatActivity{
                         cat_name_view.setText("");
                         cat_desc_view.setText("");
 
-                        Intent i = new Intent(CategoryDetails.this, CategoryList.class);
-                        startActivity(i);
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

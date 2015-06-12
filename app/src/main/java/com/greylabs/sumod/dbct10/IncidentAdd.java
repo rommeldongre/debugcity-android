@@ -43,8 +43,7 @@ public class IncidentAdd extends AppCompatActivity {
                         inc_long_editTextView.setText("");
                         inc_cat_editTextView.setText("");
 
-                        Intent i = new Intent(IncidentAdd.this, IncidentList.class);
-                        startActivity(i);
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
