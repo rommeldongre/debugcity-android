@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBarActivity;
 
 public class IncidentDetails extends ActionBarActivity {
     DBHandler db;
-    Button button_edit_incident;
     IncidentList list;
 
     public void buttonEditIncident(View view){
@@ -62,7 +61,9 @@ public class IncidentDetails extends ActionBarActivity {
                 incident.setCategory(String.valueOf(inc_cat_view.getText()));
 
                 db.editIncident(incident);
+                db.close();
                 Toast.makeText(this, "UPDATED", Toast.LENGTH_LONG).show();
+
                 button_edit_incident.setText("EDIT");
 
                 break;

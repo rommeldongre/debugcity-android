@@ -5,7 +5,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:text="New Text"
         android:paddingRight="20dp"
         android:paddingBottom="20dp"
@@ -15,7 +15,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:text="New Text"
         android:paddingRight="20dp"
         android:paddingBottom="20dp"

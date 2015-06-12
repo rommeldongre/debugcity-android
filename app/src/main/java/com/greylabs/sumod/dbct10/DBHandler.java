@@ -237,14 +237,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void editCategory(Category category) {
+    public void editCategory(Category category, String category_name) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, category.getName());
         values.put(KEY_DESCRIPTION, category.getDescription());
 
-        db.update(TABLE_CATEGORY, values, KEY_NAME + "=?", new String[]{category.getName()});
+        db.update(TABLE_CATEGORY, values, KEY_NAME + "=?", new String[]{category_name});
         db.close();
     }
 
