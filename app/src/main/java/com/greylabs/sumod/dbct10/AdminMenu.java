@@ -7,19 +7,35 @@ import android.database.sqlite.SQLiteDatabase;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 
-public class AdminMenu extends ActionBarActivity {
+public class AdminMenu extends AppCompatActivity {
     DBHandler db;
 
     public void buttonResetDatabase(View view){
-        db.resetDatabase();
-        Toast.makeText(this, "DATABASE DELETED!", Toast.LENGTH_SHORT).show();
 
+        new AlertDialog.Builder(this)
+                .setTitle("Reset Databases")
+                .setMessage("Delete entire Database?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        db.resetDatabase();
+                        Toast.makeText(AdminMenu.this, "DELETED!", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override
@@ -75,4 +91,6 @@ public class AdminMenu extends ActionBarActivity {
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
     }
+
+
 }

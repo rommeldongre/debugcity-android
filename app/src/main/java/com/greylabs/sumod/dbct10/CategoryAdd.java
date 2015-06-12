@@ -1,8 +1,12 @@
 package com.greylabs.sumod.dbct10;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-public class CategoryAdd extends ActionBarActivity {
+public class CategoryAdd extends AppCompatActivity {
 
     DBHandler db;
     Button button_save_category;
@@ -19,14 +23,32 @@ public class CategoryAdd extends ActionBarActivity {
     EditText cat_desc_editTextView;
 
     public void buttonSaveCategory(View view){
-        Category category = new Category();
-        category.setName(cat_name_editTextView.getText().toString());
-        category.setDescription(cat_desc_editTextView.getText().toString());
-        db.addCategory(category, this);
-        Toast.makeText(this, "SAVED", Toast.LENGTH_SHORT).show();
-        cat_name_editTextView.setText("");
-        cat_desc_editTextView.setText("");
 
+        new AlertDialog.Builder(this)
+                .setTitle("Save")
+                .setMessage("Save this Category?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Category category = new Category();
+                        category.setName(cat_name_editTextView.getText().toString());
+                        category.setDescription(cat_desc_editTextView.getText().toString());
+                        db.addCategory(category, CategoryAdd.this);
+                        Toast.makeText(CategoryAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
+                        cat_name_editTextView.setText("");
+                        cat_desc_editTextView.setText("");
+
+                        Intent i = new Intent(CategoryAdd.this, CategoryList.class);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 

@@ -92,7 +92,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_CATEGORY, incident.getCategory());
 
             long k = db.insertOrThrow(TABLE_INCIDENTS, null, values);
-            ShowAlert("db.insertOrThrow Returns:", String.valueOf(k), context);
+            //ShowAlert("db.insertOrThrow Returns:", String.valueOf(k), context);
             db.close();
         }
         catch(SQLiteException e){

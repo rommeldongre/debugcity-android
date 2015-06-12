@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.SimpleCursorAdapter;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class CategoryList extends ActionBarActivity {
+public class CategoryList extends AppCompatActivity {
     DBHandler db;
     TextView category_name;
     public void gotoCategoryAdd(View view){

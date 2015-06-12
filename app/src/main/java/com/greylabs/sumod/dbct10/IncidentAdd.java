@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 
 
-public class IncidentAdd extends ActionBarActivity {
+public class IncidentAdd extends AppCompatActivity {
     DBHandler db;
     Button button_save_incident;
     EditText inc_lat_editTextView;
@@ -23,6 +24,38 @@ public class IncidentAdd extends ActionBarActivity {
     EditText inc_cat_editTextView;
     IncidentList list = new IncidentList();
 
+    public void buttonSaveIncident(View view){
+        
+
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Save")
+                .setMessage("Save this Incident?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Incident incident = new Incident();
+                        incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
+                        incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
+                        incident.setCategory(inc_cat_editTextView.getText().toString());
+                        db.addIncident(incident, IncidentAdd.this);
+                        Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
+                        inc_lat_editTextView.setText("");
+                        inc_long_editTextView.setText("");
+                        inc_cat_editTextView.setText("");
+
+                        Intent i = new Intent(IncidentAdd.this, IncidentList.class);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,18 +94,7 @@ public class IncidentAdd extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void buttonSaveIncident(View view){
-        Incident incident = new Incident();
-        incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
-        incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
-        incident.setCategory(inc_cat_editTextView.getText().toString());
-        db.addIncident(incident, this);
-        Toast.makeText(this, "SAVED", Toast.LENGTH_SHORT).show();
-        inc_lat_editTextView.setText("");
-        inc_long_editTextView.setText("");
-        inc_cat_editTextView.setText("");
-        //list.populateListView();
-    }
+
 
     public void ShowAlert(String title, String message){
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();

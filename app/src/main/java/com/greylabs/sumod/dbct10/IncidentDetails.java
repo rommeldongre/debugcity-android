@@ -1,9 +1,11 @@
 package com.greylabs.sumod.dbct10;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +18,7 @@ import android.widget.Toast;
 import android.support.v7.app.ActionBarActivity;
 
 
-public class IncidentDetails extends ActionBarActivity {
+public class IncidentDetails extends AppCompatActivity {
     DBHandler db;
     IncidentList list;
 
@@ -71,20 +73,39 @@ public class IncidentDetails extends ActionBarActivity {
     }
 
     public void buttonDeleteIncident(View view){
-        Intent intent = getIntent();
-        int incident_id = intent.getIntExtra("incident_id", 0);
-        db.deleteIncdient(incident_id);
-        Toast.makeText(this, "DELETED!", Toast.LENGTH_LONG).show();
 
-        EditText inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);
-        EditText inc_long_view = (EditText) findViewById(R.id.inc_long_view);
-        EditText inc_cat_view = (EditText) findViewById(R.id.inc_cat_view);
-        Button button_edit_incident = (Button) findViewById(R.id.button_edit_incident);
+        new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Delete this entry?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Intent intent = getIntent();
+                        int incident_id = intent.getIntExtra("incident_id", 0);
+                        db.deleteIncdient(incident_id);
+                        Toast.makeText(IncidentDetails.this, "DELETED!", Toast.LENGTH_LONG).show();
+
+                        EditText inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);
+                        EditText inc_long_view = (EditText) findViewById(R.id.inc_long_view);
+                        EditText inc_cat_view = (EditText) findViewById(R.id.inc_cat_view);
+                        Button button_edit_incident = (Button) findViewById(R.id.button_edit_incident);
 
 
-        inc_lat_view.setText("");
-        inc_long_view.setText("");
-        inc_cat_view.setText("");
+                        inc_lat_view.setText("");
+                        inc_long_view.setText("");
+                        inc_cat_view.setText("");
+
+                        Intent i = new Intent(IncidentDetails.this, IncidentList.class);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
 
     }
 

@@ -1,7 +1,9 @@
 package com.greylabs.sumod.dbct10;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -15,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class CategoryDetails extends ActionBarActivity{
+public class CategoryDetails extends AppCompatActivity{
 
     DBHandler db;
     CategoryList list;
@@ -64,16 +66,38 @@ public class CategoryDetails extends ActionBarActivity{
     }
 
     public void buttonDeleteCategory(View view){
-        Intent intent = getIntent();
-        String category_name = intent.getStringExtra("category_name");
-        db.deleteCategory(category_name);
-        Toast.makeText(this, "DELETED!", Toast.LENGTH_LONG).show();
 
-        EditText cat_name_view = (EditText) findViewById(R.id.cat_name_view);
-        EditText cat_desc_view = (EditText) findViewById(R.id.cat_desc_view);
 
-        cat_name_view.setText("");
-        cat_desc_view.setText("");
+        new AlertDialog.Builder(this)
+                .setTitle("Reset Databases")
+                .setMessage("Delete entire Database?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Intent intent = getIntent();
+                        String category_name = intent.getStringExtra("category_name");
+                        db.deleteCategory(category_name);
+                        db.close();
+                        Toast.makeText(CategoryDetails.this, "DELETED!", Toast.LENGTH_LONG).show();
+
+                        EditText cat_name_view = (EditText) findViewById(R.id.cat_name_view);
+                        EditText cat_desc_view = (EditText) findViewById(R.id.cat_desc_view);
+
+                        cat_name_view.setText("");
+                        cat_desc_view.setText("");
+
+                        Intent i = new Intent(CategoryDetails.this, CategoryList.class);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
     }
 
     @Override
