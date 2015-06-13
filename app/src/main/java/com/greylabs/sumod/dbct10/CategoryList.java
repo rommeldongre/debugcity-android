@@ -67,6 +67,33 @@ public class CategoryList extends AppCompatActivity {
     }
 
     public void populateListView(){
+        Cursor cursor = db.getAllCategories();
+
+        String[] fromFieldNames = new String[] {"_id", DBHandler.KEY_DESCRIPTION};
+
+        int[] toViewIDs = new int[] {R.id.category_name, R.id.category_description};
+
+        SimpleCursorAdapter myCursorAdapter;
+        myCursorAdapter = new SimpleCursorAdapter(getBaseContext(), R.layout.category_list_item, cursor, fromFieldNames, toViewIDs, 0);
+        ListView categorylistview = (ListView) findViewById(R.id.categorylistview);
+
+        categorylistview.setAdapter(myCursorAdapter);
+        categorylistview.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        category_name = (TextView) view.findViewById(R.id.category_name);
+                        String categoryname = category_name.getText().toString();
+                        Intent objIntent = new Intent(getApplicationContext(),CategoryDetails.class);
+                        objIntent.putExtra("category_name", categoryname);
+                        startActivity(objIntent);
+                    }
+                }
+        );
+    }
+
+    /*
+    public void populateListView(){
         try {
             ArrayList<HashMap<String, String>> categoryList = db.getCategoryList(this);
             ListView categorylistview = (ListView) findViewById(R.id.categorylistview);
@@ -94,6 +121,7 @@ public class CategoryList extends AppCompatActivity {
             ShowAlert("Exception Caught", e.getMessage());
         }
     }
+    */
 
     public void ShowAlert(String title, String message){
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();

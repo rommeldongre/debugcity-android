@@ -82,7 +82,7 @@ public class IncidentDetails extends AppCompatActivity {
                         // continue with delete
                         Intent intent = getIntent();
                         int incident_id = intent.getIntExtra("incident_id", 0);
-                        db.deleteIncdient(incident_id);
+                        db.deleteIncident(incident_id);
                         Toast.makeText(IncidentDetails.this, "DELETED!", Toast.LENGTH_LONG).show();
 
                         EditText inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);

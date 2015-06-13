@@ -73,37 +73,36 @@ public class IncidentList extends AppCompatActivity {
 
 
 
-/*
+
     private void populateListView(){
         Cursor cursor = db.getAllIncidents();
-        //ShowAlert("Pop up", "db.getAllIncidents");
+        String[] fromFieldNames = new String[] {"_id", DBHandler.KEY_LATITUDE, DBHandler.KEY_LONGITUDE, DBHandler.KEY_CATEGORY};
 
-        //1
-        String[] fromFieldNames = new String[] {DBHandler.KEY_ID, DBHandler.KEY_LATITUDE, DBHandler.KEY_LONGITUDE, DBHandler.KEY_CATEGORY};
-        ShowAlert("Popup","1");
-
-        //2
         int[] toViewIDs = new int[] {R.id.incident_id, R.id.incident_latitude, R.id.incident_longitude, R.id.incident_category};
-        ShowAlert("Popup", "2");
 
-        //3
         SimpleCursorAdapter myCursorAdapter;
-        ShowAlert("Pop up", "3");
 
-        //4
         myCursorAdapter = new SimpleCursorAdapter(getBaseContext(), R.layout.incident_list_item, cursor, fromFieldNames, toViewIDs, 0);
-        ShowAlert("Pop up", "4");
 
-        //5
         ListView incidentlistview = (ListView) findViewById(R.id.incidentlistview);
-        ShowAlert("Pop up", "5");
 
-        //6
         incidentlistview.setAdapter(myCursorAdapter);
-        ShowAlert("Pop up", "6");
+        incidentlistview.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                        incident_id = (TextView) view.findViewById(R.id.incident_id);
+                        String incidentId = incident_id.getText().toString();
+                        Intent objIntent = new Intent(getApplicationContext(),IncidentDetails.class);
+                        objIntent.putExtra("incident_id", Integer.parseInt(incidentId));
+                        startActivity(objIntent);
+
+                    }
+                }
+        );
     }
-*/
+
 
 
     public void ShowAlert(String title, String message){
@@ -119,6 +118,7 @@ public class IncidentList extends AppCompatActivity {
         alertDialog.show();
     }
 
+    /*
     public void populateListView(){
         ArrayList<HashMap<String, String>> incidentList =  db.getIncidentList();
         ListView incidentlistview = (ListView) findViewById(R.id.incidentlistview);
@@ -141,5 +141,6 @@ public class IncidentList extends AppCompatActivity {
                 }
         );
     }
+    */
 }
 
