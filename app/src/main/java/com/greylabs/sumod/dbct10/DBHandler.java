@@ -251,9 +251,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Cursor getAllIncidents() {
         SQLiteDatabase db = getReadableDatabase();
-        String where = null;
-        String[] ALL_KEYS = new String[]{KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_CATEGORY};
-        Cursor cursor = db.query(true, TABLE_INCIDENTS, ALL_KEYS, where, null, null, null, null, null);
+
+        Cursor cursor = db.rawQuery("SELECT ID as _id, LATITUDE, LONGITUDE, CATEGORY FROM INCIDENTS", null);
         if(cursor != null){
             cursor.moveToFirst();
         }
@@ -264,7 +263,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Cursor getAllCategories() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(true, TABLE_CATEGORY, null, null, null, null, null, null, null);
+        String query = "SELECT NAME AS _id, DESCRIPTION FROM CATEGORY";
+        Cursor cursor = db.rawQuery(query, null);
+
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -273,7 +274,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     //Deleting a row.
-    public void deleteIncdient(int _id) {
+    public void deleteIncident(int _id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         //  db.execSQL("DELETE FROM" + TABLE_INCIDENTS + "WHERE" + KEY_ID + "=" + new String[]{String.valueOf(_id)});
