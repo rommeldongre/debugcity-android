@@ -67,7 +67,20 @@ public class IncidentAdd extends AppCompatActivity {
         inc_long_editTextView = (EditText) findViewById(R.id.inc_long_editTextView);
         inc_cat_editTextView = (EditText) findViewById(R.id.inc_cat_editTextView);
 
-        //ShowAlert("Pop up", "All the views and DBHandler object initialised");
+        GPSTracker gps = new GPSTracker(this);
+        if(gps.canGetLocation()){
+
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
+            inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
+
+            inc_lat_editTextView.setEnabled(false);
+            inc_long_editTextView.setEnabled(false);
+        }
+        else{
+            gps.showSettingsAlert(this);
+        }
 
     }
 
@@ -108,4 +121,21 @@ public class IncidentAdd extends AppCompatActivity {
         alertDialog.show();
     }
 
+    public void buttonGetLocation(View view){
+        inc_lat_editTextView.setEnabled(true);
+        inc_long_editTextView.setEnabled(true);
+
+        GPSTracker gps = new GPSTracker(this);
+
+        if(gps.canGetLocation()){
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
+            inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
+            Toast.makeText(this, "Lat: " + String.valueOf(latitude) + "\nLong: " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
+        }
+        else {
+            gps.showSettingsAlert(this);
+        }
+    }
 }

@@ -19,8 +19,10 @@
     <string name="edit">EDIT</string>
     <string name="reset">RESET</string>
     <string name="refresh">REFRESH</string>
+    <string name="get_location">Get Location</string>
     <string name="title_activity_incident_details">IncidentDetails</string>
     <string name="title_activity_category_details">CategoryDetails</string>
     <string name="title_activity_incident_add">IncidentAdd</string>
     <string name="title_activity_category_add">CategoryAdd</string>
+    <string name="title_activity_my_location">MyLocationActivity</string>
 </resources>

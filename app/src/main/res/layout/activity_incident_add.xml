@@ -70,4 +70,13 @@
         android:inputType="text"
         android:layout_toEndOf="@+id/inc_key_long_view" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/get_location"
+        android:id="@+id/button_get_location"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="buttonGetLocation" />
+
 </RelativeLayout>
