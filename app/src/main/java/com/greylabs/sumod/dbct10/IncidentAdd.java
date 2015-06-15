@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -12,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 
@@ -23,6 +27,19 @@ public class IncidentAdd extends AppCompatActivity {
     EditText inc_long_editTextView;
     EditText inc_cat_editTextView;
     IncidentList list = new IncidentList();
+    ImageView inc_imageView;
+    Bitmap photo;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    public void buttonShootIncident(View view){
+        if(!hasCamera())
+            Toast.makeText(this, "No camera on device", Toast.LENGTH_SHORT).show();
+        else{
+            Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 
     public void buttonSaveIncident(View view){
         
@@ -37,6 +54,7 @@ public class IncidentAdd extends AppCompatActivity {
                         incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
                         incident.setCategory(inc_cat_editTextView.getText().toString());
+                        incident.setImage(photo);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
@@ -66,6 +84,7 @@ public class IncidentAdd extends AppCompatActivity {
         inc_lat_editTextView = (EditText) findViewById(R.id.inc_lat_editTextView);
         inc_long_editTextView = (EditText) findViewById(R.id.inc_long_editTextView);
         inc_cat_editTextView = (EditText) findViewById(R.id.inc_cat_editTextView);
+        inc_imageView = (ImageView) findViewById(R.id.inc_imageView);
 
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
@@ -82,6 +101,16 @@ public class IncidentAdd extends AppCompatActivity {
             gps.showSettingsAlert(this);
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
+        {
+            Bundle extras = data.getExtras();
+            photo = (Bitmap) extras.get("data");
+            inc_imageView.setImageBitmap(photo);
+        }
     }
 
     @Override
@@ -137,5 +166,9 @@ public class IncidentAdd extends AppCompatActivity {
         else {
             gps.showSettingsAlert(this);
         }
+    }
+
+    private boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
 }

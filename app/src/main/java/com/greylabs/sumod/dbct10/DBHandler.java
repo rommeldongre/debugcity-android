@@ -4,6 +4,7 @@ package com.greylabs.sumod.dbct10;
  * Created by Sumod on 6/3/2015.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -31,6 +34,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String KEY_LATITUDE = "LATITUDE";
     public static final String KEY_LONGITUDE = "LONGITUDE";
     public static final String KEY_CATEGORY = "CATEGORY";
+    public static final String KEY_IMAGE = "IMAGE";
 
     //Category Table:
     public static final String TABLE_CATEGORY = "CATEGORY";
@@ -45,7 +49,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT , "
                 + KEY_LATITUDE + " VARCHAR(255) , "
                 + KEY_LONGITUDE + " VARCHAR(255), "
-                + KEY_CATEGORY + " VARCHAR(255) " + ")";
+                + KEY_CATEGORY + " VARCHAR(255), "
+                + KEY_IMAGE + " BLOB " + ")";
         db.execSQL(CREATE_TABLE_INCIDENTS);
 
         String CREATE_TABLE_CATEGORY = " CREATE TABLE " + TABLE_CATEGORY + "("
@@ -90,7 +95,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_LATITUDE, incident.getLatitude());
             values.put(KEY_LONGITUDE, incident.getLongitude());
             values.put(KEY_CATEGORY, incident.getCategory());
-
+            values.put(KEY_IMAGE, getBitmapAsByteArray(incident.getImage()));
             long k = db.insertOrThrow(TABLE_INCIDENTS, null, values);
             //ShowAlert("db.insertOrThrow Returns:", String.valueOf(k), context);
             db.close();
@@ -126,14 +131,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Incident getIncident(int _id, Context context) {
             SQLiteDatabase db = this.getReadableDatabase();
-            String query = "SELECT ID, LATITUDE, LONGITUDE, CATEGORY FROM INCIDENTS WHERE ID =?";
+            String query = "SELECT ID, LATITUDE, LONGITUDE, CATEGORY, IMAGE FROM INCIDENTS WHERE ID =?";
 
             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(_id)});
             //ShowAlert("Cursor count:", String.valueOf(cursor.getCount()), context);
             cursor.moveToFirst();
         Incident incident = new Incident(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
                 cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
-                cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)), cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+                cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
+                cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)),
+                getByteArrayAsBitmap(cursor.getBlob(cursor.getColumnIndex(KEY_IMAGE))));
         cursor.close();
         db.close();
         return incident;
@@ -230,7 +237,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LATITUDE, incident.getLatitude());
         values.put(KEY_LONGITUDE, incident.getLongitude());
         values.put(KEY_CATEGORY, incident.getCategory());
-
+        values.put(KEY_IMAGE, getBitmapAsByteArray(incident.getImage()));
         db.update(TABLE_INCIDENTS, values, KEY_ID + "=?", new String[]{String.valueOf(incident.get_id())});
         db.close();
 
@@ -289,6 +296,17 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.delete(TABLE_CATEGORY, KEY_NAME + "=?", new String[]{NAME});
         db.close();
+    }
+
+    //converting bitmap to byte[]:
+    public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        return outputStream.toByteArray();
+    }
+
+    public static Bitmap getByteArrayAsBitmap(byte[] imgByte){
+        return BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.greylabs.sumod.dbct10;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Sumod on 6/3/2015.
  */
@@ -10,6 +12,7 @@ public class Incident {
     private double latitude;
     private double longitude;
     private String category;
+    private Bitmap image;
 
     //Constructors:
     public Incident(int _id, double latitude, double longitude, String category){
@@ -17,6 +20,14 @@ public class Incident {
         this.category = category;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public Incident(int _id, double latitude, double longitude, String category, Bitmap image){
+        this._id = _id;
+        this.category = category;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.image = image;
     }
 
     public Incident(double latitude, double longitude, String category) {
@@ -47,6 +58,10 @@ public class Incident {
         return longitude;
     }
 
+    public Bitmap getImage() {
+        return image;
+    }
+
     //Setters:
 
     public void set_id(int _id) {
@@ -63,5 +78,9 @@ public class Incident {
 
     public void setLongitude(double longtitude) {
         this.longitude = longtitude;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }

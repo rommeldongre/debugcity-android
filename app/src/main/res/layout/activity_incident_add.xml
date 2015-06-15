@@ -75,8 +75,26 @@
         android:layout_height="wrap_content"
         android:text="@string/get_location"
         android:id="@+id/button_get_location"
+        android:onClick="buttonGetLocation"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="buttonGetLocation" />
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/inc_imageView"
+        android:layout_below="@+id/inc_cat_editTextView"
+        android:layout_above="@+id/button_save_incident"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/inc_cat_editTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shoot"
+        android:onClick="buttonShootIncident"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

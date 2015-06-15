@@ -2,15 +2,34 @@ package com.greylabs.sumod.dbct10;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    ImageView imageView;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    public void buttonShoot(View view){
+        if(!hasCamera())
+            Toast.makeText(this, "No camera on device", Toast.LENGTH_SHORT).show();
+        else{
+            Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 
     public void adminButtonClicked(View view){
         Intent i = new Intent(this, AdminMenu.class);
@@ -21,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        imageView = (ImageView) findViewById(R.id.imageView);
+
     }
 
     @Override
@@ -43,5 +64,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
+        {
+            Bundle extras = data.getExtras();
+            Bitmap photo = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(photo);
+        }
+    }
+
+    private boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
 }

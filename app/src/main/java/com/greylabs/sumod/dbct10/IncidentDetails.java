@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import android.support.v7.app.ActionBarActivity;
 
 public class IncidentDetails extends AppCompatActivity {
     DBHandler db;
+    ImageView inc_image_view;
     IncidentList list;
 
     public void buttonEditIncident(View view){
@@ -124,6 +126,7 @@ public class IncidentDetails extends AppCompatActivity {
         TextView inc_lat_view = (TextView) findViewById(R.id.inc_lat_view);
         TextView inc_long_view = (TextView) findViewById(R.id.inc_long_view);
         TextView inc_cat_view = (TextView) findViewById(R.id.inc_cat_view);
+        inc_image_view = (ImageView) findViewById(R.id.inc_image_view);
 
         inc_lat_view.setEnabled(false);
         inc_long_view.setEnabled(false);
@@ -136,6 +139,7 @@ public class IncidentDetails extends AppCompatActivity {
         inc_lat_view.setText(String.valueOf(incident.getLatitude()));
         inc_long_view.setText(String.valueOf(incident.getLongitude()));
         inc_cat_view.setText(String.valueOf(incident.getCategory()));
+        inc_image_view.setImageBitmap(incident.getImage());
     }
 
 
