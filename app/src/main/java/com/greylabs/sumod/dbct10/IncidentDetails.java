@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -22,12 +23,13 @@ import android.support.v7.app.ActionBarActivity;
 public class IncidentDetails extends AppCompatActivity {
     DBHandler db;
     ImageView inc_image_view;
+    Bitmap photo;
+    EditText inc_lat_view;
+    EditText inc_long_view;
+    EditText inc_cat_view;
     IncidentList list;
 
     public void buttonEditIncident(View view){
-        EditText inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);
-        EditText inc_long_view = (EditText) findViewById(R.id.inc_long_view);
-        EditText inc_cat_view = (EditText) findViewById(R.id.inc_cat_view);
         Button button_edit_incident = (Button) findViewById(R.id.button_edit_incident);
 
         String text = String.valueOf(button_edit_incident.getText());
@@ -63,6 +65,7 @@ public class IncidentDetails extends AppCompatActivity {
                 incident.setLatitude(Double.valueOf(String.valueOf(inc_lat_view.getText())));
                 incident.setLongitude(Double.valueOf(String.valueOf(inc_long_view.getText())));
                 incident.setCategory(String.valueOf(inc_cat_view.getText()));
+                incident.setImage(photo);
 
                 db.editIncident(incident);
                 db.close();
@@ -86,12 +89,6 @@ public class IncidentDetails extends AppCompatActivity {
                         int incident_id = intent.getIntExtra("incident_id", 0);
                         db.deleteIncident(incident_id);
                         Toast.makeText(IncidentDetails.this, "DELETED!", Toast.LENGTH_LONG).show();
-
-                        EditText inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);
-                        EditText inc_long_view = (EditText) findViewById(R.id.inc_long_view);
-                        EditText inc_cat_view = (EditText) findViewById(R.id.inc_cat_view);
-                        Button button_edit_incident = (Button) findViewById(R.id.button_edit_incident);
-
 
                         inc_lat_view.setText("");
                         inc_long_view.setText("");
@@ -123,9 +120,9 @@ public class IncidentDetails extends AppCompatActivity {
         Incident incident = new Incident();
         incident = db.getIncident(_incident_id, this);
 
-        TextView inc_lat_view = (TextView) findViewById(R.id.inc_lat_view);
-        TextView inc_long_view = (TextView) findViewById(R.id.inc_long_view);
-        TextView inc_cat_view = (TextView) findViewById(R.id.inc_cat_view);
+        inc_lat_view = (EditText) findViewById(R.id.inc_lat_view);
+        inc_long_view = (EditText) findViewById(R.id.inc_long_view);
+        inc_cat_view = (EditText) findViewById(R.id.inc_cat_view);
         inc_image_view = (ImageView) findViewById(R.id.inc_image_view);
 
         inc_lat_view.setEnabled(false);
@@ -140,6 +137,9 @@ public class IncidentDetails extends AppCompatActivity {
         inc_long_view.setText(String.valueOf(incident.getLongitude()));
         inc_cat_view.setText(String.valueOf(incident.getCategory()));
         inc_image_view.setImageBitmap(incident.getImage());
+
+        photo = incident.getImage();//this is temporary since we don't yet know how to 'Edit' the image.
+        //so to not pass a null object to the setImage() function we're passing what we already have.
     }
 
 
