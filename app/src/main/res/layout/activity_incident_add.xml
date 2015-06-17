@@ -4,7 +4,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.greylabs.sumod.dbct10.IncidentAdd">
+    tools:context="com.greylabs.sumod.dbct10.IncidentAdd"
+    android:background="@color/background_floating_material_light">
 
 
     <TextView
@@ -71,13 +72,14 @@
         android:layout_toEndOf="@+id/inc_key_long_view" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/get_location"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/button_get_location"
         android:onClick="buttonGetLocation"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:background="@android:drawable/ic_menu_mylocation"
+        android:backgroundTint="@color/bright_foreground_material_light"
+        android:layout_alignTop="@+id/button"
+        android:layout_toStartOf="@+id/inc_cat_editTextView" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -89,12 +91,13 @@
         android:layout_alignEnd="@+id/inc_cat_editTextView" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/shoot"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
         android:onClick="buttonShootIncident"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/ic_menu_camera"
+        android:backgroundTint="@color/bright_foreground_material_light" />
 
 </RelativeLayout>
