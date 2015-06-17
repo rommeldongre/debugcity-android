@@ -11,6 +11,8 @@
     <string name="key_category">CATEGORY</string>
     <string name="key_name">NAME</string>
     <string name="key_description">DESCRIPTION</string>
+    <string name="lat">Lat:</string>
+    <string name="Long">Long:</string>
     <string name="title_activity_admin_menu">AdminMenu</string>
     <string name="title_activity_incident_list">IncidentList</string>
     <string name="title_activity_category_list">CategoryList</string>
@@ -19,6 +21,7 @@
     <string name="edit">EDIT</string>
     <string name="reset">RESET</string>
     <string name="refresh">REFRESH</string>
+    <string name="submit">Submit</string>
     <string name="get_location">Get Location</string>
     <string name="shoot">Shoot</string>
     <string name="title_activity_incident_details">IncidentDetails</string>
@@ -26,4 +29,5 @@
     <string name="title_activity_incident_add">IncidentAdd</string>
     <string name="title_activity_category_add">CategoryAdd</string>
     <string name="title_activity_my_location">MyLocationActivity</string>
+    <string name="title_activity_user_add">UserAdd</string>
 </resources>

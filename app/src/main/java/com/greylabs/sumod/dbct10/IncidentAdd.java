@@ -41,6 +41,24 @@ public class IncidentAdd extends AppCompatActivity {
         }
     }
 
+    public void buttonGetLocation(View view){
+        inc_lat_editTextView.setEnabled(true);
+        inc_long_editTextView.setEnabled(true);
+
+        GPSTracker gps = new GPSTracker(this);
+
+        if(gps.canGetLocation()){
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
+            inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
+            Toast.makeText(this, "Lat: " + String.valueOf(latitude) + "\nLong: " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
+        }
+        else {
+            gps.showSettingsAlert(this);
+        }
+    }
+
     public void buttonSaveIncident(View view){
         
 
@@ -86,6 +104,7 @@ public class IncidentAdd extends AppCompatActivity {
         inc_cat_editTextView = (EditText) findViewById(R.id.inc_cat_editTextView);
         inc_imageView = (ImageView) findViewById(R.id.inc_imageView);
 
+        /*
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
 
@@ -100,6 +119,7 @@ public class IncidentAdd extends AppCompatActivity {
         else{
             gps.showSettingsAlert(this);
         }
+        */
 
     }
 
@@ -148,24 +168,6 @@ public class IncidentAdd extends AppCompatActivity {
         });
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
-    }
-
-    public void buttonGetLocation(View view){
-        inc_lat_editTextView.setEnabled(true);
-        inc_long_editTextView.setEnabled(true);
-
-        GPSTracker gps = new GPSTracker(this);
-
-        if(gps.canGetLocation()){
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
-            inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
-            inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
-            Toast.makeText(this, "Lat: " + String.valueOf(latitude) + "\nLong: " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
-        }
-        else {
-            gps.showSettingsAlert(this);
-        }
     }
 
     private boolean hasCamera(){

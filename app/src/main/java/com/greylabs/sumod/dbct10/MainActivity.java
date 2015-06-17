@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -72,11 +75,24 @@ public class MainActivity extends AppCompatActivity {
         {
             Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(photo);
+            Intent i = new Intent(MainActivity.this, UserAdd.class);
+            i.putExtra("Photo", photo);
+            startActivity(i);
         }
     }
 
     private boolean hasCamera(){
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    //converting bitmap to byte[] and vice-versa:
+    public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        return outputStream.toByteArray();
+    }
+
+    public static Bitmap getByteArrayAsBitmap(byte[] imgByte){
+        return BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
     }
 }

@@ -199,6 +199,22 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public List<String> getCategoryList(Context context){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + KEY_NAME + " FROM " + TABLE_CATEGORY, null);
+        List<String> categoryList = new ArrayList<>();
+
+        if(cursor.moveToFirst()){
+            do{
+                categoryList.add(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            }
+            while(cursor.moveToNext());
+        }
+        cursor.close();
+        return categoryList;
+    }
+
+/*
     //get all categories in a hashmap to display on a listview.
     public ArrayList<HashMap<String, String>> getCategoryList(Context context) {
         //Open connection to read only
@@ -227,6 +243,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return categoryList;
 
     }
+    */
 
 
     //Updating a row:
