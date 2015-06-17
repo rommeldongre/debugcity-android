@@ -13,11 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
+
+import java.util.List;
 
 
 public class IncidentAdd extends AppCompatActivity {
@@ -25,7 +29,7 @@ public class IncidentAdd extends AppCompatActivity {
     Button button_save_incident;
     EditText inc_lat_editTextView;
     EditText inc_long_editTextView;
-    EditText inc_cat_editTextView;
+    Spinner spinner_category;
     IncidentList list = new IncidentList();
     ImageView inc_imageView;
     Bitmap photo;
@@ -71,13 +75,12 @@ public class IncidentAdd extends AppCompatActivity {
                         Incident incident = new Incident();
                         incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
-                        incident.setCategory(inc_cat_editTextView.getText().toString());
+                        incident.setCategory(spinner_category.getSelectedItem().toString());
                         incident.setImage(photo);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
                         inc_long_editTextView.setText("");
-                        inc_cat_editTextView.setText("");
 
                         finish();
                     }
@@ -101,8 +104,12 @@ public class IncidentAdd extends AppCompatActivity {
         button_save_incident = (Button) findViewById(R.id.button_save_incident);
         inc_lat_editTextView = (EditText) findViewById(R.id.inc_lat_editTextView);
         inc_long_editTextView = (EditText) findViewById(R.id.inc_long_editTextView);
-        inc_cat_editTextView = (EditText) findViewById(R.id.inc_cat_editTextView);
+        spinner_category = (Spinner) findViewById(R.id.spinner_category);
         inc_imageView = (ImageView) findViewById(R.id.inc_imageView);
+
+        List<String> categoryList = db.getCategoryList(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, categoryList);
+        spinner_category.setAdapter(adapter);
 
         /*
         GPSTracker gps = new GPSTracker(this);
