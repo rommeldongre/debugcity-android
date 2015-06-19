@@ -77,7 +77,7 @@
             android:layout_height="match_parent"
             android:id="@+id/spinner_category"
             android:layout_weight="1"
-            android:background="@color/button_material_dark"
+            android:background="#ff0a525c"
             android:popupBackground="@color/primary_material_light"
             android:spinnerMode="dropdown" />
 
@@ -110,7 +110,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/button_get_location"
-        android:layout_below="@+id/linearLayout_cat_spin" />
+        android:layout_below="@+id/linearLayout_cat_spin"
+        android:clickable="true"
+        android:onClick="buttonSelectImage" />
 
     <Button
         android:layout_width="60dp"
@@ -122,7 +124,6 @@
         android:background="@android:drawable/ic_menu_camera"
         android:backgroundTint="@color/bright_foreground_material_dark"
         android:backgroundTintMode="multiply" />
-
 
 
 </RelativeLayout>

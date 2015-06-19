@@ -3,8 +3,12 @@ package com.greylabs.sumod.dbct10;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,13 +26,22 @@ import java.util.List;
 
 public class UserAdd extends ActionBarActivity {
 
+    private static final int SELECT_PICTURE = 1;
     DBHandler db;
     TextView user_lat_editTextView;
     TextView user_long_editTextView;
     Spinner spinner;
     ImageView user_imageView;
-    Bitmap photo;
+    Bitmap bitmap;
 
+    public void buttonSelectImage(View view){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(i, "Select Picture"),
+                SELECT_PICTURE);
+    }
 
     public void buttonUserSave(View view){
 
@@ -42,7 +55,8 @@ public class UserAdd extends ActionBarActivity {
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
                         incident.setCategory(spinner.getSelectedItem().toString());
-                        incident.setImage(photo);
+                        bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
+                        incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);
                         Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
 
@@ -58,6 +72,18 @@ public class UserAdd extends ActionBarActivity {
                 .show();
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                String selectedImagePath = getPath(selectedImageUri);
+                System.out.println("Image Path : " + selectedImagePath);
+                user_imageView.setVisibility(View.VISIBLE);
+                user_imageView.setImageURI(selectedImageUri);
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +97,7 @@ public class UserAdd extends ActionBarActivity {
         user_imageView = (ImageView) findViewById(R.id.user_imageView);
 
         Intent intent = getIntent();
-        photo = intent.getParcelableExtra("Photo");
+        Bitmap photo = intent.getParcelableExtra("Photo");
         user_imageView.setImageBitmap(photo);
 
         //user_imageView.setImageBitmap(photo);
@@ -141,4 +167,13 @@ public class UserAdd extends ActionBarActivity {
         alertDialog.show();
     }
 
+    @SuppressWarnings("deprecation")
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
 }

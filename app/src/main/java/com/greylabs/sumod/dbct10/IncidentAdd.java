@@ -5,7 +5,10 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -25,6 +28,7 @@ import java.util.List;
 
 
 public class IncidentAdd extends AppCompatActivity {
+
     DBHandler db;
     Button button_save_incident;
     EditText inc_lat_editTextView;
@@ -33,7 +37,9 @@ public class IncidentAdd extends AppCompatActivity {
     IncidentList list = new IncidentList();
     ImageView inc_imageView;
     Bitmap photo;
+    Bitmap bitmap;
 
+    private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     public void buttonShootIncident(View view){
@@ -43,6 +49,13 @@ public class IncidentAdd extends AppCompatActivity {
             Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
         }
+    }
+
+    public void buttonSelectImage(View view){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
     }
 
     public void buttonGetLocation(View view){
@@ -76,7 +89,9 @@ public class IncidentAdd extends AppCompatActivity {
                         incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
                         incident.setCategory(spinner_category.getSelectedItem().toString());
-                        incident.setImage(photo);
+
+                        bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
+                        incident.setImage(bitmap);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
@@ -90,7 +105,7 @@ public class IncidentAdd extends AppCompatActivity {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(android.R.drawable.stat_sys_warning)
                 .show();
 
     }
@@ -138,6 +153,13 @@ public class IncidentAdd extends AppCompatActivity {
             photo = (Bitmap) extras.get("data");
             inc_imageView.setImageBitmap(photo);
         }
+        else if (requestCode == SELECT_PICTURE) {
+            Uri selectedImageUri = data.getData();
+            String selectedImagePath = getPath(selectedImageUri);
+            System.out.println("Image Path : " + selectedImagePath);
+            inc_imageView.setVisibility(View.VISIBLE);
+            inc_imageView.setImageURI(selectedImageUri);
+        }
     }
 
     @Override
@@ -179,5 +201,15 @@ public class IncidentAdd extends AppCompatActivity {
 
     private boolean hasCamera(){
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    @SuppressWarnings("deprecation")
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }
