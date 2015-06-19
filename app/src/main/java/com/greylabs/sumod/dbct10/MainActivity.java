@@ -3,8 +3,10 @@ package com.greylabs.sumod.dbct10;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +25,17 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
 
+    private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    public void buttonSelectImage(View view){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(i, "Select Picture"),
+                SELECT_PICTURE);
+    }
 
     public void buttonShoot(View view){
         if(!hasCamera())
@@ -77,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
             Bitmap photo = (Bitmap) extras.get("data");
             Intent i = new Intent(MainActivity.this, UserAdd.class);
             i.putExtra("Photo", photo);
+            i.putExtra("resultCode", REQUEST_IMAGE_CAPTURE);
+            startActivity(i);
+        }
+        if (requestCode == SELECT_PICTURE) {
+            Uri selectedImageUri = data.getData();
+            String selectedImagePath = getPath(selectedImageUri);
+            System.out.println("Image Path : " + selectedImagePath);
+            Intent i = new Intent(MainActivity.this, UserAdd.class);
+            i.putExtra("ImageUri", selectedImageUri);
+            i.putExtra("resultCode", SELECT_PICTURE);
             startActivity(i);
         }
     }
@@ -94,5 +116,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static Bitmap getByteArrayAsBitmap(byte[] imgByte){
         return BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
+    }
+
+    @SuppressWarnings("deprecation")
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }

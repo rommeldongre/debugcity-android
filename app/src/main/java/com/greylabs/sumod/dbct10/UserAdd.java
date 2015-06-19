@@ -26,7 +26,8 @@ import java.util.List;
 
 public class UserAdd extends ActionBarActivity {
 
-    private static final int SELECT_PICTURE = 1;
+    private static final int SELECT_PICTURE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     DBHandler db;
     TextView user_lat_editTextView;
     TextView user_long_editTextView;
@@ -84,7 +85,6 @@ public class UserAdd extends ActionBarActivity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +97,19 @@ public class UserAdd extends ActionBarActivity {
         user_imageView = (ImageView) findViewById(R.id.user_imageView);
 
         Intent intent = getIntent();
-        Bitmap photo = intent.getParcelableExtra("Photo");
-        user_imageView.setImageBitmap(photo);
+        int resultCode = intent.getIntExtra("resultCode", 2);
+        switch (resultCode){
+            case SELECT_PICTURE:
+                Uri imageUri = intent.getParcelableExtra("ImageUri");
+                user_imageView.setImageURI(imageUri);
+                break;
+
+            case REQUEST_IMAGE_CAPTURE:
+                Bitmap photo = intent.getParcelableExtra("Photo");
+                user_imageView.setImageBitmap(photo);
+                break;
+        }
+
 
         //user_imageView.setImageBitmap(photo);
         List<String> categoryList = db.getCategoryList(this);

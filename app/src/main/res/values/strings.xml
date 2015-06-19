@@ -24,6 +24,7 @@
     <string name="submit">Submit</string>
     <string name="get_location">Get Location</string>
     <string name="shoot">Shoot</string>
+    <string name="photo">Photo</string>
     <string name="title_activity_incident_details">IncidentDetails</string>
     <string name="title_activity_category_details">CategoryDetails</string>
     <string name="title_activity_incident_add">IncidentAdd</string>
