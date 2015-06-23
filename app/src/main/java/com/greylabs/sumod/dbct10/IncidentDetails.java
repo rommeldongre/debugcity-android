@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,6 +20,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.app.ActionBarActivity;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 public class IncidentDetails extends AppCompatActivity {
@@ -66,7 +73,7 @@ public class IncidentDetails extends AppCompatActivity {
                 incident.setLongitude(Double.valueOf(String.valueOf(inc_long_view.getText())));
                 incident.setCategory(String.valueOf(inc_cat_view.getText()));
                 incident.setImage(photo);
-
+                incident.setPin_code(getPincode());
                 db.editIncident(incident);
                 db.close();
                 Toast.makeText(this, "UPDATED", Toast.LENGTH_LONG).show();
@@ -138,8 +145,12 @@ public class IncidentDetails extends AppCompatActivity {
         inc_cat_view.setText(String.valueOf(incident.getCategory()));
         inc_image_view.setImageBitmap(incident.getImage());
 
-        photo = incident.getImage();//this is temporary since we don't yet know how to 'Edit' the image.
+        ShowAlert("Pincode:", getPincode());
+
+        //photo = incident.getImage();//this is temporary since we don't yet know how to 'Edit' the image.
         //so to not pass a null object to the setImage() function we're passing what we already have.
+
+
     }
 
 
@@ -175,5 +186,22 @@ public class IncidentDetails extends AppCompatActivity {
         });
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
+    }
+
+    public String getPincode(){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addressList = new ArrayList<>();
+
+        try {
+            addressList = geocoder.getFromLocation(Double.valueOf(String.valueOf(inc_lat_view.getText())),
+                    Double.valueOf(String.valueOf(inc_long_view.getText())), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String pincode = addressList.get(0).getPostalCode();
+
+        return pincode;
     }
 }

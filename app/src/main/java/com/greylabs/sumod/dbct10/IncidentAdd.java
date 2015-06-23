@@ -2,12 +2,15 @@ package com.greylabs.sumod.dbct10;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,7 +27,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class IncidentAdd extends AppCompatActivity {
@@ -38,6 +44,8 @@ public class IncidentAdd extends AppCompatActivity {
     ImageView inc_imageView;
     Bitmap photo;
     Bitmap bitmap;
+    double latitude;
+    double longitude;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -65,8 +73,8 @@ public class IncidentAdd extends AppCompatActivity {
         GPSTracker gps = new GPSTracker(this);
 
         if(gps.canGetLocation()){
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
             inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
             inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
             Toast.makeText(this, "Lat: " + String.valueOf(latitude) + "\nLong: " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
@@ -89,15 +97,16 @@ public class IncidentAdd extends AppCompatActivity {
                         incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
                         incident.setCategory(spinner_category.getSelectedItem().toString());
-
-                        bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
+                        incident.setPin_code(getPincode());
+                        if(((BitmapDrawable)inc_imageView.getDrawable()).getBitmap()!=null)
+                            bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
                         inc_long_editTextView.setText("");
 
-                        finish();
+                        //finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -211,5 +220,21 @@ public class IncidentAdd extends AppCompatActivity {
                 .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+    }
+
+    public String getPincode(){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addressList = new ArrayList<>();
+
+        try {
+            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String pincode = addressList.get(0).getPostalCode();
+
+        return pincode;
     }
 }

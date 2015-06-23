@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -21,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class UserAdd extends ActionBarActivity {
@@ -34,6 +39,8 @@ public class UserAdd extends ActionBarActivity {
     Spinner spinner;
     ImageView user_imageView;
     Bitmap bitmap;
+    double latitude;
+    double longitude;
 
     public void buttonSelectImage(View view){
         Intent i = new Intent();
@@ -56,6 +63,7 @@ public class UserAdd extends ActionBarActivity {
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
                         incident.setCategory(spinner.getSelectedItem().toString());
+                        incident.setPin_code(getPincode());
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);
@@ -119,8 +127,8 @@ public class UserAdd extends ActionBarActivity {
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
 
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
             user_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
             user_long_editTextView.setText(String.valueOf(gps.getLongitude()));
 
@@ -186,5 +194,21 @@ public class UserAdd extends ActionBarActivity {
                 .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+    }
+
+    public String getPincode(){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addressList = new ArrayList<>();
+
+        try {
+            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String pincode = addressList.get(0).getPostalCode();
+
+        return pincode;
     }
 }

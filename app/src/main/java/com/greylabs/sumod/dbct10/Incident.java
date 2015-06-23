@@ -1,6 +1,14 @@
 package com.greylabs.sumod.dbct10;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Sumod on 6/3/2015.
@@ -13,6 +21,7 @@ public class Incident {
     private double longitude;
     private String category;
     private Bitmap image;
+    private String pin_code;
 
     //Constructors:
     public Incident(int _id, double latitude, double longitude, String category){
@@ -36,9 +45,19 @@ public class Incident {
         this.longitude = longitude;
     }
 
+    public Incident(int _id, double latitude, double longitude, String category, Bitmap image, String pin_code) {
+        this._id = _id;
+        this.category = category;
+        this.image = image;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pin_code = pin_code;
+    }
+
     public Incident(){
 
     }
+
 
     //Getters:
 
@@ -62,6 +81,10 @@ public class Incident {
         return image;
     }
 
+    public String getPin_code() {
+        return pin_code;
+    }
+
     //Setters:
 
     public void set_id(int _id) {
@@ -82,5 +105,9 @@ public class Incident {
 
     public void setImage(Bitmap image) {
         this.image = image;
+    }
+
+    public void setPin_code(String pin_code) {
+        this.pin_code = pin_code;
     }
 }

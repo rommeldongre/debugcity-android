@@ -35,6 +35,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String KEY_LONGITUDE = "LONGITUDE";
     public static final String KEY_CATEGORY = "CATEGORY";
     public static final String KEY_IMAGE = "IMAGE";
+    public static final String KEY_PINCODE = "PINCODE";
 
     //Category Table:
     public static final String TABLE_CATEGORY = "CATEGORY";
@@ -50,7 +51,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_LATITUDE + " VARCHAR(255) , "
                 + KEY_LONGITUDE + " VARCHAR(255), "
                 + KEY_CATEGORY + " VARCHAR(255), "
-                + KEY_IMAGE + " BLOB " + ")";
+                + KEY_IMAGE + " BLOB, "
+                + KEY_PINCODE + " INTEGER " + ")";
         db.execSQL(CREATE_TABLE_INCIDENTS);
 
         String CREATE_TABLE_CATEGORY = " CREATE TABLE " + TABLE_CATEGORY + "("
@@ -96,6 +98,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_LONGITUDE, incident.getLongitude());
             values.put(KEY_CATEGORY, incident.getCategory());
             values.put(KEY_IMAGE, getBitmapAsByteArray(incident.getImage()));
+            values.put(KEY_PINCODE, incident.getPin_code());
             long k = db.insertOrThrow(TABLE_INCIDENTS, null, values);
             //ShowAlert("db.insertOrThrow Returns:", String.valueOf(k), context);
             db.close();
