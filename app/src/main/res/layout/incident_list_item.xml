@@ -11,6 +11,7 @@
         android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:textSize="@dimen/abc_text_size_medium_material"
+        android:textColor="@color/abc_primary_text_material_dark"
         android:id="@+id/incident_id" />
 
     <TextView
@@ -21,6 +22,7 @@
         android:paddingRight="20dp"
         android:paddingBottom="20dp"
         android:paddingTop="20dp"
+        android:textColor="@color/abc_primary_text_material_dark"
         android:id="@+id/incident_latitude" />
 
     <TextView
@@ -31,6 +33,7 @@
         android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:textSize="@dimen/abc_text_size_medium_material"
+        android:textColor="@color/abc_primary_text_material_dark"
         android:id="@+id/incident_longitude" />
 
     <TextView
@@ -41,5 +44,6 @@
         android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:textSize="@dimen/abc_text_size_medium_material"
+        android:textColor="@color/abc_primary_text_material_dark"
         android:id="@+id/incident_category" />
 </LinearLayout>

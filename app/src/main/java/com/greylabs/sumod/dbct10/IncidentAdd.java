@@ -77,7 +77,9 @@ public class IncidentAdd extends AppCompatActivity {
             longitude = gps.getLongitude();
             inc_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
             inc_long_editTextView.setText(String.valueOf(gps.getLongitude()));
-            Toast.makeText(this, "Lat: " + String.valueOf(latitude) + "\nLong: " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
+            Incident incident = new Incident(latitude, longitude);
+            incident.setPin_code(this);
+            Toast.makeText(this, "PinCode: " + incident.getPin_code(), Toast.LENGTH_LONG).show();
         }
         else {
             gps.showSettingsAlert(this);

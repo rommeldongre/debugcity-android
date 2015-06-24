@@ -134,7 +134,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Incident getIncident(int _id, Context context) {
             SQLiteDatabase db = this.getReadableDatabase();
-            String query = "SELECT ID, LATITUDE, LONGITUDE, CATEGORY, IMAGE FROM INCIDENTS WHERE ID =?";
+            String query = "SELECT ID, LATITUDE, LONGITUDE, CATEGORY, IMAGE, PINCODE FROM INCIDENTS WHERE ID =?";
 
             Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(_id)});
             //ShowAlert("Cursor count:", String.valueOf(cursor.getCount()), context);
@@ -143,7 +143,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
                 cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
                 cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)),
-                getByteArrayAsBitmap(cursor.getBlob(cursor.getColumnIndex(KEY_IMAGE))));
+                getByteArrayAsBitmap(cursor.getBlob(cursor.getColumnIndex(KEY_IMAGE))),
+                cursor.getString(cursor.getColumnIndex(KEY_PINCODE)));
         cursor.close();
         db.close();
         return incident;
@@ -258,6 +259,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LONGITUDE, incident.getLongitude());
         values.put(KEY_CATEGORY, incident.getCategory());
         values.put(KEY_IMAGE, getBitmapAsByteArray(incident.getImage()));
+        values.put(KEY_PINCODE, incident.getPin_code());
         db.update(TABLE_INCIDENTS, values, KEY_ID + "=?", new String[]{String.valueOf(incident.get_id())});
         db.close();
 

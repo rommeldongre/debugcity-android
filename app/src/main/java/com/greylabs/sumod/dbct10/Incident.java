@@ -1,6 +1,7 @@
 package com.greylabs.sumod.dbct10;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,6 +25,13 @@ public class Incident {
     private String pin_code;
 
     //Constructors:
+
+
+    public Incident(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Incident(int _id, double latitude, double longitude, String category){
         this._id = _id;
         this.category = category;
@@ -113,14 +121,33 @@ public class Incident {
 
     public void setPin_code(Context context){
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        List<Address> addressList = new ArrayList<>();
+        List<Address> addressList;
 
         try {
             addressList = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addressList.size() != 0) {
+                pin_code = addressList.get(0).getPostalCode();
+            }
+            else{
+                pin_code = "Unknown";
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            ShowAlert("Exception Caught:", e.getMessage(), context);
         }
 
-        pin_code = addressList.get(0).getPostalCode();
+    }
+
+    public void ShowAlert(String title, String message, Context context) {
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(context).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // here you can add functions
+            }
+        });
+        alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
+        alertDialog.show();
     }
 }

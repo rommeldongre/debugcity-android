@@ -7,34 +7,86 @@
     tools:context="com.greylabs.sumod.dbct10.IncidentDetails"
     android:background="@color/material_blue_grey_800">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout1">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/key_latitude"
-        android:id="@+id/inc_key_lat_view"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/inc_lat_view" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/lat"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:id="@+id/inc_key_lat_view"
+            android:paddingBottom="30dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="20dp"
+            android:textColor="@color/abc_primary_text_material_dark" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/key_longitude"
-        android:id="@+id/inc_key_long_view"
-        android:layout_alignParentStart="true"
-        android:paddingRight="20dp"
-        android:layout_alignTop="@+id/inc_long_view"
-        android:layout_alignBottom="@+id/inc_long_view" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/inc_lat_view"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_weight="1"
+            android:textColor="@color/abc_primary_text_material_dark" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/key_category"
-        android:id="@+id/inc_key_cat_view"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/Long"
+            android:id="@+id/inc_key_long_view"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:paddingBottom="30dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="20dp"
+            android:textColor="@color/abc_primary_text_material_dark" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/inc_long_view"
+            android:maxLines="1"
+            android:layout_weight="1"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:inputType="numberDecimal"
+            android:textColor="@color/abc_primary_text_material_dark" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linearLayout1"
         android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/inc_cat_view"
-        android:layout_alignBottom="@+id/inc_cat_view" />
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/key_category"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:id="@+id/inc_key_cat_view"
+            android:paddingBottom="30dp"
+            android:paddingEnd="20dp"
+            android:paddingStart="0dp"
+            android:textColor="@color/abc_primary_text_material_dark" />
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_inc_details"
+            android:textColor="@color/abc_primary_text_material_dark"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+
 
     <Button
         android:layout_width="wrap_content"
@@ -55,36 +107,6 @@
         android:layout_alignParentEnd="true" />
 
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:inputType="numberDecimal"
-        android:id="@+id/inc_lat_view"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/inc_key_long_view" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:inputType="numberDecimal"
-        android:id="@+id/inc_long_view"
-        android:layout_below="@+id/inc_lat_view"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/inc_key_long_view" />
-
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:inputType="text"
-        android:id="@+id/inc_cat_view"
-        android:layout_below="@+id/inc_long_view"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/inc_key_long_view" />
 
     <ImageView
         android:layout_width="300dp"
@@ -92,7 +114,16 @@
         android:id="@+id/inc_image_view"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/button_delete_incident"
-        android:layout_alignEnd="@+id/button_edit_incident"
-        android:layout_below="@+id/inc_key_cat_view" />
+        android:layout_alignEnd="@+id/button_edit_incident" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/inc_pincode_view"
+        android:layout_below="@+id/inc_image_view"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
 </RelativeLayout>

@@ -8,48 +8,52 @@
     android:background="@color/material_blue_grey_800">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:id="@+id/linearLayout1">
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:id="@+id/linearLayout1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/lat"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:id="@+id/user_key_latitude_view"
-            android:paddingBottom="30dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/lat"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:id="@+id/user_key_latitude_view"
+        android:paddingBottom="30dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/user_lat_editTextView"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:maxLines="1"
-            android:layout_weight="1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/user_lat_editTextView"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:maxLines="1"
+        android:layout_weight="1"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/Long"
-            android:id="@+id/user_key_longitude_view"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:paddingBottom="30dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/Long"
+        android:id="@+id/user_key_longitude_view"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:paddingBottom="30dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/user_long_editTextView"
-            android:maxLines="1"
-            android:layout_weight="1"
-            android:textSize="@dimen/abc_text_size_medium_material" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/user_long_editTextView"
+        android:maxLines="1"
+        android:layout_weight="1"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
-    </LinearLayout>
+</LinearLayout>
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -67,7 +71,8 @@
         android:id="@+id/user_key_category_view"
         android:paddingBottom="30dp"
         android:paddingEnd="20dp"
-        android:paddingStart="0dp"/>
+        android:paddingStart="0dp"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <Spinner
         android:layout_width="0dp"
