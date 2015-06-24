@@ -73,7 +73,7 @@ public class IncidentDetails extends AppCompatActivity {
                 incident.setLongitude(Double.valueOf(String.valueOf(inc_long_view.getText())));
                 incident.setCategory(String.valueOf(inc_cat_view.getText()));
                 incident.setImage(photo);
-                incident.setPin_code(getPincode());
+                incident.setPin_code(IncidentDetails.this);
                 db.editIncident(incident);
                 db.close();
                 Toast.makeText(this, "UPDATED", Toast.LENGTH_LONG).show();
@@ -145,7 +145,7 @@ public class IncidentDetails extends AppCompatActivity {
         inc_cat_view.setText(String.valueOf(incident.getCategory()));
         inc_image_view.setImageBitmap(incident.getImage());
 
-        ShowAlert("Pincode:", getPincode());
+        ShowAlert("Pincode:", incident.getPin_code());
 
         //photo = incident.getImage();//this is temporary since we don't yet know how to 'Edit' the image.
         //so to not pass a null object to the setImage() function we're passing what we already have.
@@ -188,20 +188,4 @@ public class IncidentDetails extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public String getPincode(){
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        List<Address> addressList = new ArrayList<>();
-
-        try {
-            addressList = geocoder.getFromLocation(Double.valueOf(String.valueOf(inc_lat_view.getText())),
-                    Double.valueOf(String.valueOf(inc_long_view.getText())), 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String pincode = addressList.get(0).getPostalCode();
-
-        return pincode;
-    }
 }

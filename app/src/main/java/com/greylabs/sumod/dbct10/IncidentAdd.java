@@ -97,16 +97,15 @@ public class IncidentAdd extends AppCompatActivity {
                         incident.setLatitude(Double.valueOf(inc_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
                         incident.setCategory(spinner_category.getSelectedItem().toString());
-                        incident.setPin_code(getPincode());
-                        if(((BitmapDrawable)inc_imageView.getDrawable()).getBitmap()!=null)
-                            bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
+                        incident.setPin_code(IncidentAdd.this);
+                        bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
                         inc_long_editTextView.setText("");
 
-                        //finish();
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -222,19 +221,4 @@ public class IncidentAdd extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    public String getPincode(){
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        List<Address> addressList = new ArrayList<>();
-
-        try {
-            addressList = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String pincode = addressList.get(0).getPostalCode();
-
-        return pincode;
-    }
 }

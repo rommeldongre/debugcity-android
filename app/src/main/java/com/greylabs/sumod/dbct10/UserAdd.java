@@ -63,7 +63,7 @@ public class UserAdd extends ActionBarActivity {
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
                         incident.setCategory(spinner.getSelectedItem().toString());
-                        incident.setPin_code(getPincode());
+                        incident.setPin_code(UserAdd.this);
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);

@@ -20,8 +20,9 @@ import android.view.View;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +32,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView imageView;
+    DBHandler db;
+    ListView mainListView;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -63,35 +65,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageView = (ImageView) findViewById(R.id.imageView);
-
-        /*
-        Geocoder geocoder;
-        List<Address> addresses = new ArrayList<>();
-        geocoder = new Geocoder(this, Locale.getDefault());
-
-
-        GPSTracker gps = new GPSTracker(this);
-
-        double latitude = gps.getLatitude();
-        double longitude = gps.getLongitude();
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-        String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
-        String country = addresses.get(0).getCountryName();
-        String postalCode = addresses.get(0).getPostalCode();
-        String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-
-        String string = address + "\n" + city + "\n" + state + "\n" + country + "\n" + postalCode + "\n" + knownName;
-
-        ShowAlert("Address:", string, "OK");
-        */
+        db = new DBHandler(this, null, null, 1);
+        mainListView = (ListView) findViewById(R.id.mainListView);
+        populateListView();
     }
 
     @Override
@@ -174,5 +150,16 @@ public class MainActivity extends AppCompatActivity {
         });
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
+    }
+
+    public void populateListView(){
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE as _id, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
+
+        String[] fromFeildNames = new String[] {"_id", "C"};
+        int[] toViewIDs = new int[] {android.R.id.text1, android.R.id.text2};
+
+        SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2,
+                cursor, fromFeildNames, toViewIDs, 0);
+        mainListView.setAdapter(myCursorAdapter);
     }
 }

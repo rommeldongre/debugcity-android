@@ -299,6 +299,33 @@ public class DBHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getAllIncidentsBy(String columnNames, String whereClause, String whereArgs){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + columnNames + " FROM INCIDENTS WHERE " + whereClause + " =?";
+        Cursor cursor = db.rawQuery(query, new String[]{whereArgs});
+
+        if(cursor != null)
+            cursor.moveToFirst();
+        return cursor;
+    }
+
+    public Cursor getCursorByRawQuery(String query, String whereArgs){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{whereArgs});
+
+        if(cursor != null)
+            cursor.moveToFirst();
+        return cursor;
+    }
+
+    public Cursor getCursorByRawQuery(String query){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+        return cursor;
+    }
+
 
     //Deleting a row.
     public void deleteIncident(int _id) {

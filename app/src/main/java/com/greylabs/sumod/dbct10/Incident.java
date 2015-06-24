@@ -110,4 +110,17 @@ public class Incident {
     public void setPin_code(String pin_code) {
         this.pin_code = pin_code;
     }
+
+    public void setPin_code(Context context){
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addressList = new ArrayList<>();
+
+        try {
+            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        pin_code = addressList.get(0).getPostalCode();
+    }
 }
