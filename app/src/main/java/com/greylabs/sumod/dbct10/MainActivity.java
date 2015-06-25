@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -23,6 +24,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.series.BarGraphSeries;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = new DBHandler(this, null, null, 1);
-        mainListView = (ListView) findViewById(R.id.mainListView);
-        populateListView();
+        populateChart();
     }
 
     @Override
@@ -161,5 +172,44 @@ public class MainActivity extends AppCompatActivity {
         SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2,
                 cursor, fromFeildNames, toViewIDs, 0);
         mainListView.setAdapter(myCursorAdapter);
+    }
+
+    public void populateChart(){
+
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE as _id, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
+        int count = cursor.getCount();
+        cursor.moveToFirst();
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        for(int i = 0; i<count; i++){
+            barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
+            cursor.moveToNext();
+        }
+
+        /*ArrayList<BarEntry> entries = new ArrayList<>();
+        entries.add(new BarEntry(4f, 0));
+        entries.add(new BarEntry(8f, 1));
+        entries.add(new BarEntry(6f, 2));
+        entries.add(new BarEntry(12f, 3));
+        entries.add(new BarEntry(18f, 4));
+        entries.add(new BarEntry(9f, 5));*/
+
+        BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
+
+
+
+        ArrayList<String> labels = new ArrayList<String>();
+        //labels.add("test");
+        cursor.moveToFirst();
+        for(int i = 0; i<count; i++){
+            labels.add(cursor.getString(cursor.getColumnIndex("_id")));
+            cursor.moveToNext();
+        }
+        BarChart chart = (BarChart) findViewById(R.id.chart);
+
+        BarData data = new BarData(labels, barDataset);
+        chart.setData(data);
+
+        chart.setDescription("# of Incidents vs PinCode");
+
     }
 }

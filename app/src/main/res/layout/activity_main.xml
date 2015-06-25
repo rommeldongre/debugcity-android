@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -33,14 +34,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="buttonSelectImage" />
 
-    <ListView
-        android:layout_width="match_parent"
+    <view
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mainListView"
+        class="com.github.mikephil.charting.charts.BarChart"
+        android:id="@+id/chart"
+        android:layout_above="@+id/adminButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/adminButton" />
-
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
