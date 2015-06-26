@@ -90,6 +90,8 @@ public class Incident {
     }
 
     public String getPin_code() {
+        if(pin_code == null)
+            pin_code = "Unknown";
         return pin_code;
     }
 

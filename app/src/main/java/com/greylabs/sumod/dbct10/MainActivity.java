@@ -1,6 +1,5 @@
 package com.greylabs.sumod.dbct10;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,9 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,34 +14,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v7.app.ActionBarActivity;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.ValueDependentColor;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
 
     DBHandler db;
     ListView mainListView;
+    ViewFlipper viewFlipper;
+    BarChart chart1;
+    BarChart chart2;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -77,8 +68,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+
         db = new DBHandler(this, null, null, 1);
-        populateChart();
+        chart1 = (BarChart) findViewById(R.id.chart1);
+        chart2 = (BarChart) findViewById(R.id.chart2);
+
+        ((ViewGroup)chart1.getParent()).removeView(chart1);
+        ((ViewGroup)chart2.getParent()).removeView(chart2);
+
+        viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+        viewFlipper.addView(chart1); viewFlipper.addView(chart2);
+        populateChart1();
+        populateChart2();
+        viewFlipper.startFlipping();
+        viewFlipper.setFlipInterval(1000);
     }
 
     @Override
@@ -174,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         mainListView.setAdapter(myCursorAdapter);
     }
 
-    public void populateChart(){
+    public void populateChart1(){
 
         Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE as _id, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
         int count = cursor.getCount();
@@ -198,18 +202,44 @@ public class MainActivity extends AppCompatActivity {
 
 
         ArrayList<String> labels = new ArrayList<String>();
-        //labels.add("test");
+        //labels.add("test");labels.add("test2");labels.add("test3");
         cursor.moveToFirst();
         for(int i = 0; i<count; i++){
             labels.add(cursor.getString(cursor.getColumnIndex("_id")));
             cursor.moveToNext();
         }
-        BarChart chart = (BarChart) findViewById(R.id.chart);
 
         BarData data = new BarData(labels, barDataset);
-        chart.setData(data);
+        chart1.setData(data);
 
-        chart.setDescription("# of Incidents vs PinCode");
+        chart1.setDescription("# of Incidents vs PinCode");
 
+    }
+
+    public void populateChart2(){
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY as _id, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
+        int count = cursor.getCount();
+
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        cursor.moveToFirst();
+        for (int i = 0; i<count; i++){
+            barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
+            cursor.moveToNext();
+        }
+
+        BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
+
+        ArrayList<String> labels = new ArrayList<>();
+        cursor.moveToFirst();
+        for (int i = 0; i<count; i++){
+            labels.add(cursor.getString(cursor.getColumnIndex("_id")));
+            cursor.moveToNext();
+        }
+
+        chart2 = (BarChart) findViewById(R.id.chart2);
+        BarData data = new BarData(labels, barDataset);
+        chart2.setData(data);
+
+        chart2.setDescription("# of Incidents vs Category");
     }
 }
