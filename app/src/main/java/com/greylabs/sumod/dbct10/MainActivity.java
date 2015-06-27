@@ -22,9 +22,13 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     ViewFlipper viewFlipper;
     BarChart chart1;
     BarChart chart2;
+    RadarChart chart3;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         db = new DBHandler(this, null, null, 1);
         chart1 = (BarChart) findViewById(R.id.chart1);
         chart2 = (BarChart) findViewById(R.id.chart2);
+        chart3 = (RadarChart) findViewById(R.id.chart3);
 
         ((ViewGroup)chart1.getParent()).removeView(chart1);
         ((ViewGroup)chart2.getParent()).removeView(chart2);
@@ -82,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         populateChart1();
         populateChart2();
         viewFlipper.startFlipping();
-        viewFlipper.setFlipInterval(1000);
+        viewFlipper.setFlipInterval(5000);
     }
 
     @Override
@@ -90,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        populateChart1();
+        populateChart2();
+        super.onResume();
     }
 
     @Override
@@ -189,17 +202,7 @@ public class MainActivity extends AppCompatActivity {
             cursor.moveToNext();
         }
 
-        /*ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(4f, 0));
-        entries.add(new BarEntry(8f, 1));
-        entries.add(new BarEntry(6f, 2));
-        entries.add(new BarEntry(12f, 3));
-        entries.add(new BarEntry(18f, 4));
-        entries.add(new BarEntry(9f, 5));*/
-
         BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
-
-
 
         ArrayList<String> labels = new ArrayList<String>();
         //labels.add("test");labels.add("test2");labels.add("test3");
@@ -211,9 +214,21 @@ public class MainActivity extends AppCompatActivity {
 
         BarData data = new BarData(labels, barDataset);
         chart1.setData(data);
-
+        chart1.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
         chart1.setDescription("# of Incidents vs PinCode");
 
+        //Styling
+        chart1.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+        barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
+
+        XAxis xAxis = chart1.getXAxis();
+        xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisLeft = chart1.getAxisLeft();
+        yAxisLeft.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisRight = chart1.getAxisRight();
+        yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+
+        chart1.animateY(3000);
     }
 
     public void populateChart2(){
@@ -241,5 +256,24 @@ public class MainActivity extends AppCompatActivity {
         chart2.setData(data);
 
         chart2.setDescription("# of Incidents vs Category");
+
+        //Styling
+        chart2.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+        barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
+
+        XAxis xAxis = chart2.getXAxis();
+        xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisLeft = chart2.getAxisLeft();
+        yAxisLeft.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisRight = chart2.getAxisRight();
+        yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+
+        chart1.animateY(3000);
+    }
+
+    public void populateChart3(){
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY as _id, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
+        int count = cursor.getCount();
+
     }
 }

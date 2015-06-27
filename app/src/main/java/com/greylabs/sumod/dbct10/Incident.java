@@ -22,7 +22,7 @@ public class Incident {
     private double longitude;
     private String category;
     private Bitmap image;
-    private String pin_code;
+    private String pin_code = "Unknown";
 
     //Constructors:
 
