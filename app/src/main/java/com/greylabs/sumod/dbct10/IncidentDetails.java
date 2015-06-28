@@ -49,6 +49,7 @@ public class IncidentDetails extends AppCompatActivity {
             case "EDIT":
                 inc_lat_view.setEnabled(true);
                 inc_long_view.setEnabled(true);
+                spinner_inc_details.setEnabled(true);
 
                 inc_lat_view.setCursorVisible(true);
                 inc_long_view.setCursorVisible(true);
@@ -132,19 +133,23 @@ public class IncidentDetails extends AppCompatActivity {
         spinner_inc_details = (Spinner) findViewById(R.id.spinner_inc_details);
         inc_pincode_view = (TextView) findViewById(R.id.inc_pincode_view);
 
+        List<String> categoryList = db.getCategoryList(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, categoryList);
+        spinner_inc_details.setAdapter(adapter);
+
         inc_lat_view.setEnabled(false);
         inc_long_view.setEnabled(false);
+        spinner_inc_details.setEnabled(false);
 
         inc_lat_view.setCursorVisible(false);
         inc_long_view.setCursorVisible(false);
 
         inc_lat_view.setText(String.valueOf(incident.getLatitude()));
         inc_long_view.setText(String.valueOf(incident.getLongitude()));
+        spinner_inc_details.setSelection(adapter.getPosition(incident.getCategory()));
         inc_image_view.setImageBitmap(incident.getImage());
         inc_pincode_view.setText(incident.getPin_code());
-        List<String> categoryList = db.getCategoryList(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, categoryList);
-        spinner_inc_details.setAdapter(adapter);
+
 
         //ShowAlert("PinCode:", incident.getPin_code());
 

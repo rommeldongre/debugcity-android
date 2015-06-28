@@ -23,15 +23,20 @@ import android.widget.ViewFlipper;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.RadarData;
+import com.github.mikephil.charting.data.RadarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -82,11 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
         ((ViewGroup)chart1.getParent()).removeView(chart1);
         ((ViewGroup)chart2.getParent()).removeView(chart2);
+        ((ViewGroup)chart3.getParent()).removeView(chart3);
 
         viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
-        viewFlipper.addView(chart1); viewFlipper.addView(chart2);
+        viewFlipper.addView(chart1); viewFlipper.addView(chart2); viewFlipper.addView(chart3);
         populateChart1();
         populateChart2();
+        populateChart3();
+
         viewFlipper.startFlipping();
         viewFlipper.setFlipInterval(5000);
     }
@@ -102,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         populateChart1();
         populateChart2();
+        populateChart3();
         super.onResume();
     }
 
@@ -193,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void populateChart1(){
 
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE as _id, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
         int count = cursor.getCount();
         cursor.moveToFirst();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -208,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         //labels.add("test");labels.add("test2");labels.add("test3");
         cursor.moveToFirst();
         for(int i = 0; i<count; i++){
-            labels.add(cursor.getString(cursor.getColumnIndex("_id")));
+            labels.add(cursor.getString(cursor.getColumnIndex("PINCODE")));
             cursor.moveToNext();
         }
 
@@ -218,6 +227,10 @@ public class MainActivity extends AppCompatActivity {
         chart1.setDescription("# of Incidents vs PinCode");
 
         //Styling
+        Legend legend = chart1.getLegend();
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(R.color.material_blue_grey_800);
+        legend.setColors(colors);
         chart1.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
         barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
 
@@ -232,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateChart2(){
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY as _id, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
         int count = cursor.getCount();
 
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -247,11 +260,10 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> labels = new ArrayList<>();
         cursor.moveToFirst();
         for (int i = 0; i<count; i++){
-            labels.add(cursor.getString(cursor.getColumnIndex("_id")));
+            labels.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
             cursor.moveToNext();
         }
 
-        chart2 = (BarChart) findViewById(R.id.chart2);
         BarData data = new BarData(labels, barDataset);
         chart2.setData(data);
 
@@ -272,8 +284,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateChart3(){
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY as _id, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
+        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
+                "WHERE PINCODE = 411038 GROUP BY CATEGORY");
         int count = cursor.getCount();
 
+        ArrayList<Entry> yVals = new ArrayList<>();
+
+        cursor.moveToFirst();
+        for (int i = 0; i<count; i++){
+            yVals.add(new Entry(cursor.getInt(cursor.getColumnIndex("C")), i));
+            cursor.moveToNext();
+        }
+
+        ArrayList<String> xVals = new ArrayList<>();
+        cursor.moveToFirst();
+        for (int i = 0; i<count; i++){
+            xVals.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
+            cursor.moveToNext();
+        }
+
+        RadarDataSet radarDataSet = new RadarDataSet(yVals, "411038");
+        radarDataSet.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+        radarDataSet.setDrawFilled(true);
+        radarDataSet.setLineWidth(2f);
+
+        RadarData radarData = new RadarData(xVals, radarDataSet);
+
+        radarData.setValueTextSize(8f);
+        radarData.setDrawValues(false);
+
+        chart3.setData(radarData);
+        chart3.invalidate();
+
+        chart3.setDescription("");
+
+        MyMarkerView myMarkerView = new MyMarkerView(this, R.layout.custom_marker_view);
+        chart3.setMarkerView(myMarkerView);
+
+        //Styling
+        chart3.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+        chart3.setWebLineWidth(1.5f);
+        chart3.setWebColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        chart3.setWebColorInner(getResources().getColor(R.color.abc_primary_text_material_dark));
+        chart3.setWebLineWidthInner(0.75f);
+        chart3.setWebAlpha(100);
+
+        XAxis xAxis = chart3.getXAxis();
+        //xAxis.setTypeface(tf);
+        xAxis.setTextSize(9f);
+        xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+
+        YAxis yAxis = chart3.getYAxis();
+        //yAxis.setTypeface(tf);
+        yAxis.setLabelCount(5);
+        yAxis.setTextSize(9f);
+        yAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        yAxis.setStartAtZero(true);
+
+        Legend legend = chart3.getLegend();
+        legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        //legend.setTypeface(tf);
+        legend.setXEntrySpace(7f);
+        legend.setYEntrySpace(5f);
+    }
+
+    public void ShowAlert(String title, String message){
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // here you can add functions
+            }
+        });
+        alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
+        alertDialog.show();
     }
 }
+
+
+
+
+
+
+
+
+
