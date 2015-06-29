@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,8 +37,10 @@ import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -95,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
         populateChart2();
         populateChart3();
 
-        viewFlipper.startFlipping();
-        viewFlipper.setFlipInterval(5000);
     }
 
     @Override
@@ -200,6 +202,16 @@ public class MainActivity extends AppCompatActivity {
         mainListView.setAdapter(myCursorAdapter);
     }
 
+    public void flipToNext(View view){
+        int count = viewFlipper.getChildCount();
+        int displayedChildIndex = viewFlipper.getDisplayedChild();
+        if (displayedChildIndex != (count-1)){
+            viewFlipper.setDisplayedChild(displayedChildIndex + 1);
+        }
+        else
+            viewFlipper.setDisplayedChild(0);
+    }
+
     public void populateChart1(){
 
         Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
@@ -225,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
         chart1.setData(data);
         chart1.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
         chart1.setDescription("# of Incidents vs PinCode");
+        chart1.setDescriptionColor(getResources().getColor(R.color.abc_primary_text_material_dark));
 
         //Styling
         Legend legend = chart1.getLegend();
@@ -237,10 +250,14 @@ public class MainActivity extends AppCompatActivity {
         XAxis xAxis = chart1.getXAxis();
         xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         YAxis yAxisLeft = chart1.getAxisLeft();
+        yAxisLeft.setEnabled(false);
         yAxisLeft.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         YAxis yAxisRight = chart1.getAxisRight();
+        yAxisRight.setEnabled(false);
         yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+        xAxis.setDrawGridLines(false);
 
+        chart1.setDescriptionColor(getResources().getColor(R.color.material_blue_grey_800));
         chart1.animateY(3000);
     }
 
@@ -268,84 +285,118 @@ public class MainActivity extends AppCompatActivity {
         chart2.setData(data);
 
         chart2.setDescription("# of Incidents vs Category");
+        chart2.setDescriptionColor(getResources().getColor(R.color.material_blue_grey_800));
 
         //Styling
         chart2.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
         barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
 
+        Legend legend = chart2.getLegend();
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(R.color.material_blue_grey_800);
+        legend.setColors(colors);
+
+
         XAxis xAxis = chart2.getXAxis();
         xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         YAxis yAxisLeft = chart2.getAxisLeft();
+        yAxisLeft.setEnabled(false);
         yAxisLeft.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         YAxis yAxisRight = chart2.getAxisRight();
+        yAxisRight.setEnabled(false);
         yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
-
+        xAxis.setDrawGridLines(false);
         chart1.animateY(3000);
     }
 
     public void populateChart3(){
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
-                "WHERE PINCODE = 411038 GROUP BY CATEGORY");
-        int count = cursor.getCount();
+        GPSTracker gps = new GPSTracker(this);
 
-        ArrayList<Entry> yVals = new ArrayList<>();
-
-        cursor.moveToFirst();
-        for (int i = 0; i<count; i++){
-            yVals.add(new Entry(cursor.getInt(cursor.getColumnIndex("C")), i));
-            cursor.moveToNext();
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addressList;
+        String pin_code = null;
+        try {
+            addressList = geocoder.getFromLocation(gps.getLatitude(), gps.getLongitude(), 1);
+            if (addressList.size() != 0) {
+                pin_code = addressList.get(0).getPostalCode();
+            }
+            if(pin_code == null){
+                pin_code = "Unknown";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            ShowAlert("Exception Caught:", e.getMessage());
         }
 
-        ArrayList<String> xVals = new ArrayList<>();
-        cursor.moveToFirst();
-        for (int i = 0; i<count; i++){
-            xVals.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
-            cursor.moveToNext();
+        if (pin_code != "Unknown") {
+            Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
+                    "WHERE PINCODE = " + pin_code + " GROUP BY CATEGORY");
+
+            int count = cursor.getCount();
+
+            ArrayList<Entry> yVals = new ArrayList<>();
+
+            cursor.moveToFirst();
+            for (int i = 0; i < count; i++) {
+                yVals.add(new Entry(cursor.getInt(cursor.getColumnIndex("C")), i));
+                cursor.moveToNext();
+            }
+
+            ArrayList<String> xVals = new ArrayList<>();
+            cursor.moveToFirst();
+            for (int i = 0; i < count; i++) {
+                xVals.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
+                cursor.moveToNext();
+            }
+
+            RadarDataSet radarDataSet = new RadarDataSet(yVals, pin_code);
+            radarDataSet.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+            radarDataSet.setDrawFilled(true);
+            radarDataSet.setLineWidth(2f);
+
+            RadarData radarData = new RadarData(xVals, radarDataSet);
+
+            radarData.setValueTextSize(8f);
+            radarData.setDrawValues(false);
+
+            chart3.setData(radarData);
+            chart3.invalidate();
+
+            chart3.setDescription("");
+
+            MyMarkerView myMarkerView = new MyMarkerView(this, R.layout.custom_marker_view);
+            chart3.setMarkerView(myMarkerView);
+
+            //Styling
+            chart3.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+            chart3.setWebLineWidth(1.5f);
+            chart3.setWebColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+            chart3.setWebColorInner(getResources().getColor(R.color.abc_primary_text_material_dark));
+            chart3.setWebLineWidthInner(0.75f);
+            chart3.setWebAlpha(100);
+
+            XAxis xAxis = chart3.getXAxis();
+            //xAxis.setTypeface(tf);
+            xAxis.setTextSize(9f);
+            xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+
+            YAxis yAxis = chart3.getYAxis();
+            //yAxis.setTypeface(tf);
+            yAxis.setLabelCount(5);
+            yAxis.setTextSize(9f);
+            yAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+            yAxis.setStartAtZero(true);
+
+            Legend legend = chart3.getLegend();
+            legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+            legend.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+            //legend.setTypeface(tf);
+            legend.setXEntrySpace(7f);
+            legend.setYEntrySpace(5f);
         }
-
-        RadarDataSet radarDataSet = new RadarDataSet(yVals, "411038");
-        radarDataSet.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
-        radarDataSet.setDrawFilled(true);
-        radarDataSet.setLineWidth(2f);
-
-        RadarData radarData = new RadarData(xVals, radarDataSet);
-
-        radarData.setValueTextSize(8f);
-        radarData.setDrawValues(false);
-
-        chart3.setData(radarData);
-        chart3.invalidate();
-
-        chart3.setDescription("");
-
-        MyMarkerView myMarkerView = new MyMarkerView(this, R.layout.custom_marker_view);
-        chart3.setMarkerView(myMarkerView);
-
-        //Styling
-        chart3.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
-        chart3.setWebLineWidth(1.5f);
-        chart3.setWebColor(getResources().getColor(R.color.abc_primary_text_material_dark));
-        chart3.setWebColorInner(getResources().getColor(R.color.abc_primary_text_material_dark));
-        chart3.setWebLineWidthInner(0.75f);
-        chart3.setWebAlpha(100);
-
-        XAxis xAxis = chart3.getXAxis();
-        //xAxis.setTypeface(tf);
-        xAxis.setTextSize(9f);
-        xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
-
-        YAxis yAxis = chart3.getYAxis();
-        //yAxis.setTypeface(tf);
-        yAxis.setLabelCount(5);
-        yAxis.setTextSize(9f);
-        yAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
-        yAxis.setStartAtZero(true);
-
-        Legend legend = chart3.getLegend();
-        legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        //legend.setTypeface(tf);
-        legend.setXEntrySpace(7f);
-        legend.setYEntrySpace(5f);
+        else{
+            chart3.setNoDataText("No Pincode Data Available");
+        }
     }
 
     public void ShowAlert(String title, String message){
@@ -360,6 +411,8 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
     }
+
+
 }
 
 
