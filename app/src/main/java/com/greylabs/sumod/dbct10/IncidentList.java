@@ -84,9 +84,9 @@ public class IncidentList extends AppCompatActivity {
 
     private void populateListView(){
         Cursor cursor = db.getAllIncidents();
-        String[] fromFieldNames = new String[] {"_id", DBHandler.KEY_LATITUDE, DBHandler.KEY_LONGITUDE, DBHandler.KEY_CATEGORY};
+        String[] fromFieldNames = new String[] {"_id", DBHandler.KEY_PINCODE, DBHandler.KEY_CATEGORY};
 
-        int[] toViewIDs = new int[] {R.id.incident_id, R.id.incident_latitude, R.id.incident_longitude, R.id.incident_category};
+        int[] toViewIDs = new int[] {R.id.incident_id, R.id.incident_pincode, R.id.incident_category};
 
 
         myCursorAdapter = new SimpleCursorAdapter(getBaseContext(), R.layout.incident_list_item, cursor, fromFieldNames, toViewIDs, 0);

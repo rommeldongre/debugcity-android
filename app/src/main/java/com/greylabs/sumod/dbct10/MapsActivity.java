@@ -22,12 +22,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends ActionBarActivity implements LocationListener {
 
     GoogleMap googleMap;
+    GPSTracker gps = new GPSTracker(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        populateMapView();
+        SupportMapFragment supportMapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
+        googleMap = supportMapFragment.getMap();
         googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -39,6 +42,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
     }
 
+
+    @Override
     public void onLocationChanged(Location location) {
         TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
         double latitude = location.getLatitude();
@@ -98,7 +103,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         try {
             if(null == googleMap){
                 googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                        R.id.mapView)).getMap();
+                        R.id.googleMap)).getMap();
 
                 /**
                  * If the map is still null after attempted initialisation,

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    public void buttonSelectImage(View view){
+    public void buttonSelectImage(View view) {
         Intent i = new Intent();
         i.setType("image/*");
         i.setAction(Intent.ACTION_GET_CONTENT);
@@ -64,27 +65,26 @@ public class MainActivity extends AppCompatActivity {
                 SELECT_PICTURE);
     }
 
-    public void buttonShoot(View view){
-        if(!hasCamera())
+    public void buttonShoot(View view) {
+        if (!hasCamera())
             Toast.makeText(this, "No camera on device", Toast.LENGTH_SHORT).show();
-        else{
+        else {
             Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
         }
     }
 
-    public void gotoMapsActivity(View view){
+    public void gotoMapsActivity(View view) {
         Intent i = new Intent(this, MapsActivity.class);
         startActivity(i);
     }
 
-    public void flipToNext(View view){
+    public void flipToNext(View view) {
         int count = viewFlipper.getChildCount();
         int displayedChildIndex = viewFlipper.getDisplayedChild();
-        if (displayedChildIndex != (count-1)){
+        if (displayedChildIndex != (count - 1)) {
             viewFlipper.setDisplayedChild(displayedChildIndex + 1);
-        }
-        else
+        } else
             viewFlipper.setDisplayedChild(0);
     }
 
@@ -99,12 +99,14 @@ public class MainActivity extends AppCompatActivity {
         chart2 = (BarChart) findViewById(R.id.chart2);
         chart3 = (RadarChart) findViewById(R.id.chart3);
 
-        ((ViewGroup)chart1.getParent()).removeView(chart1);
-        ((ViewGroup)chart2.getParent()).removeView(chart2);
-        ((ViewGroup)chart3.getParent()).removeView(chart3);
+        ((ViewGroup) chart1.getParent()).removeView(chart1);
+        ((ViewGroup) chart2.getParent()).removeView(chart2);
+        ((ViewGroup) chart3.getParent()).removeView(chart3);
 
         viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
-        viewFlipper.addView(chart1); viewFlipper.addView(chart2); viewFlipper.addView(chart3);
+        viewFlipper.addView(chart1);
+        viewFlipper.addView(chart2);
+        viewFlipper.addView(chart3);
         populateChart1();
         populateChart2();
         populateChart3();
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.adminButton){
+        if (id == R.id.adminButton) {
             Intent i = new Intent(this, AdminMenu.class);
             startActivity(i);
         }
@@ -148,8 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
-        {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) extras.get("data");
             Intent i = new Intent(MainActivity.this, UserAdd.class);
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean hasCamera(){
+    private boolean hasCamera() {
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
 
@@ -179,13 +180,13 @@ public class MainActivity extends AppCompatActivity {
         return outputStream.toByteArray();
     }
 
-    public static Bitmap getByteArrayAsBitmap(byte[] imgByte){
+    public static Bitmap getByteArrayAsBitmap(byte[] imgByte) {
         return BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
     }
 
     @SuppressWarnings("deprecation")
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor
                 .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    public void ShowAlert(String title, String message, String button){
+    public void ShowAlert(String title, String message, String button) {
         AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
@@ -206,11 +207,11 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void populateListView(){
+    public void populateListView() {
         Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE as _id, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
 
-        String[] fromFeildNames = new String[] {"_id", "C"};
-        int[] toViewIDs = new int[] {android.R.id.text1, android.R.id.text2};
+        String[] fromFeildNames = new String[]{"_id", "C"};
+        int[] toViewIDs = new int[]{android.R.id.text1, android.R.id.text2};
 
         SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2,
                 cursor, fromFeildNames, toViewIDs, 0);
@@ -218,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void populateChart1(){
+    public void populateChart1() {
 
         Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
         int count = cursor.getCount();
         cursor.moveToFirst();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        for(int i = 0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
             cursor.moveToNext();
         }
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> labels = new ArrayList<String>();
         //labels.add("test");labels.add("test2");labels.add("test3");
         cursor.moveToFirst();
-        for(int i = 0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             labels.add(cursor.getString(cursor.getColumnIndex("PINCODE")));
             cursor.moveToNext();
         }
@@ -267,13 +268,13 @@ public class MainActivity extends AppCompatActivity {
         chart1.animateY(3000);
     }
 
-    public void populateChart2(){
+    public void populateChart2() {
         Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
         int count = cursor.getCount();
 
         ArrayList<BarEntry> barEntries = new ArrayList<>();
         cursor.moveToFirst();
-        for (int i = 0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
             cursor.moveToNext();
         }
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<String> labels = new ArrayList<>();
         cursor.moveToFirst();
-        for (int i = 0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             labels.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
             cursor.moveToNext();
         }
@@ -315,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         chart1.animateY(3000);
     }
 
-    public void populateChart3(){
+    public void populateChart3() {
         GPSTracker gps = new GPSTracker(this);
 
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -326,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             if (addressList.size() != 0) {
                 pin_code = addressList.get(0).getPostalCode();
             }
-            if(pin_code == null){
+            if (pin_code == null) {
                 pin_code = "Unknown";
             }
         } catch (IOException e) {
@@ -334,19 +335,37 @@ public class MainActivity extends AppCompatActivity {
             ShowAlert("Exception Caught:", e.getMessage());
         }
 
-        if (pin_code != "Unknown") {
-            Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
-                    "WHERE PINCODE = " + pin_code + " GROUP BY CATEGORY");
+        //if (pin_code != "Unknown") {
+        pin_code = "411038";
+            Cursor cursor1 = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
+                    "WHERE PINCODE = " + pin_code + " GROUP BY CATEGORY ORDER BY CATEGORY");
 
-            int count = cursor.getCount();
+            int count = cursor1.getCount();
 
-            ArrayList<Entry> yVals = new ArrayList<>();
+            ArrayList<Entry> yVals1 = new ArrayList<>();
 
-            cursor.moveToFirst();
+            cursor1.moveToFirst();
             for (int i = 0; i < count; i++) {
-                yVals.add(new Entry(cursor.getInt(cursor.getColumnIndex("C")), i));
-                cursor.moveToNext();
+                yVals1.add(new Entry(cursor1.getInt(cursor1.getColumnIndex("C")), i));
+                cursor1.moveToNext();
             }
+
+            /*
+            *
+            * to get ideal values:
+             */
+
+        Cursor cursor = db.getCursorByRawQuery("SELECT CATEGORY, MAX(C) as MOST FROM(SELECT CATEGORY, C FROM(SELECT PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
+                "GROUP BY PINCODE, CATEGORY ORDER BY CATEGORY) ORDER BY CATEGORY) GROUP BY CATEGORY");
+        ArrayList<Entry> yVals2 = new ArrayList<>();
+        cursor.moveToFirst();
+        for (int i = 0; i<cursor.getCount(); i++){
+            yVals2.add(new Entry(cursor.getInt(cursor.getColumnIndex("MOST")), i));
+            //ShowAlert(String.valueOf(i + 1) + ":", cursor.getString(cursor.getColumnIndex("CATEGORY")) + " | " +
+              //      cursor.getString(cursor.getColumnIndex("MOST")));
+            cursor.moveToNext();
+        }
+
 
             ArrayList<String> xVals = new ArrayList<>();
             cursor.moveToFirst();
@@ -355,10 +374,19 @@ public class MainActivity extends AppCompatActivity {
                 cursor.moveToNext();
             }
 
-            RadarDataSet radarDataSet = new RadarDataSet(yVals, pin_code);
-            radarDataSet.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
-            radarDataSet.setDrawFilled(true);
-            radarDataSet.setLineWidth(2f);
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
+            radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+            radarDataSet1.setDrawFilled(true);
+            radarDataSet1.setLineWidth(2f);
+
+            RadarDataSet radarDataSet2 = new RadarDataSet(yVals2, "Ideal");
+            radarDataSet2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+            radarDataSet2.setDrawFilled(false);
+            radarDataSet2.setLineWidth(2f);
+
+            ArrayList<RadarDataSet> radarDataSet = new ArrayList<>();
+            radarDataSet.add(radarDataSet1);
+            radarDataSet.add(radarDataSet2);
 
             RadarData radarData = new RadarData(xVals, radarDataSet);
 
@@ -400,13 +428,20 @@ public class MainActivity extends AppCompatActivity {
             //legend.setTypeface(tf);
             legend.setXEntrySpace(7f);
             legend.setYEntrySpace(5f);
-        }
-        else{
+       // }
+        /*else {
             chart3.setNoDataText("No Pincode Data Available");
+        }*/
+        try {
+
+        } catch (SQLiteException e) {
+            ShowAlert("Exception Caught:", e.getMessage());
         }
+
+
     }
 
-    public void ShowAlert(String title, String message){
+    public void ShowAlert(String title, String message) {
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
@@ -420,6 +455,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void Query(){
+        Cursor cursor = db.getCursorByRawQuery("SELECT CATEGORY, MAX(C) as MOST FROM(SELECT CATEGORY, C FROM(SELECT PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
+                "GROUP BY PINCODE, CATEGORY ORDER BY CATEGORY) ORDER BY CATEGORY) GROUP BY CATEGORY");
+        cursor.moveToFirst();
+        for (int i = 0; i<cursor.getCount(); i++){
+            ShowAlert(String.valueOf(i+1) + ":", cursor.getString(cursor.getColumnIndex("CATEGORY")) + " | " +
+            cursor.getString(cursor.getColumnIndex("MOST")));
+            cursor.moveToNext();
+        }
+    }
 }
 
 

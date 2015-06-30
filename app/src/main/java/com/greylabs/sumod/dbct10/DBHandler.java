@@ -281,7 +281,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public Cursor getAllIncidents() {
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT ID as _id, LATITUDE, LONGITUDE, CATEGORY FROM INCIDENTS", null);
+        Cursor cursor = db.rawQuery("SELECT ID as _id, PINCODE, CATEGORY FROM INCIDENTS", null);
         if(cursor != null){
             cursor.moveToFirst();
         }

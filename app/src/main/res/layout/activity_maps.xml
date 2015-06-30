@@ -1,16 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <fragment
-        android:id="@+id/mapView"
-        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/googleMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_above="@+id/latlongLocation" />
 
     <TextView
         android:id="@+id/latlongLocation"
@@ -24,5 +23,4 @@
         android:textColor="#ffffffff"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" />
-
 </RelativeLayout>
