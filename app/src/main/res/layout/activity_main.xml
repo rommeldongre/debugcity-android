@@ -11,19 +11,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/adminButton"
-        android:id="@+id/adminButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:onClick="adminButtonClicked"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/shoot"
         android:onClick="buttonShoot"
         android:id="@+id/button_shoot"
-        android:layout_alignBottom="@+id/adminButton"
+        android:layout_alignTop="@+id/button_maps"
         android:layout_alignParentEnd="true" />
 
     <Button
@@ -31,9 +22,9 @@
         android:layout_height="wrap_content"
         android:text="@string/photo"
         android:id="@+id/button_selectImage"
+        android:onClick="buttonSelectImage"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="buttonSelectImage" />
+        android:layout_alignParentStart="true" />
 
     <ViewFlipper
         android:layout_width="wrap_content"
@@ -42,7 +33,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/adminButton">
+        android:layout_above="@+id/button_shoot">
 
     </ViewFlipper>
 
@@ -52,9 +43,9 @@
         class="com.github.mikephil.charting.charts.BarChart"
         android:id="@+id/chart1"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/adminButton"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/button_shoot" />
 
 
 
@@ -65,27 +56,52 @@
         android:id="@+id/chart2"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/adminButton"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/button_shoot" />
 
     <view
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         class="com.github.mikephil.charting.charts.RadarChart"
         android:id="@+id/chart3"
-        android:layout_above="@+id/adminButton"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/button_shoot" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:layout_below="@+id/viewFlipper"
-        android:layout_toStartOf="@+id/button_selectImage"
-        android:onClick="flipToNext" />
+        android:id="@+id/button_flip"
+        android:onClick="flipToNext"
+        android:background="@android:drawable/ic_media_play"
+        android:layout_toEndOf="@+id/space"
+        android:layout_alignTop="@+id/space" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_maps"
+        android:background="@android:drawable/ic_menu_mapmode"
+        android:onClick="gotoMapsActivity"
+        android:layout_alignBottom="@+id/space2"
+        android:layout_toStartOf="@+id/space2" />
+
+    <Space
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/button_selectImage"
+        android:id="@+id/space"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/button_selectImage" />
+
+    <Space
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/button_shoot"
+        android:id="@+id/space2"
+        android:layout_alignTop="@+id/button_flip"
+        android:layout_alignBottom="@+id/button_flip" />
 
 
 </RelativeLayout>

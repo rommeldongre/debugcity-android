@@ -73,9 +73,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void adminButtonClicked(View view){
-        Intent i = new Intent(this, AdminMenu.class);
+    public void gotoMapsActivity(View view){
+        Intent i = new Intent(this, MapsActivity.class);
         startActivity(i);
+    }
+
+    public void flipToNext(View view){
+        int count = viewFlipper.getChildCount();
+        int displayedChildIndex = viewFlipper.getDisplayedChild();
+        if (displayedChildIndex != (count-1)){
+            viewFlipper.setDisplayedChild(displayedChildIndex + 1);
+        }
+        else
+            viewFlipper.setDisplayedChild(0);
     }
 
     @Override
@@ -102,18 +112,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
     protected void onResume() {
         populateChart1();
         populateChart2();
         populateChart3();
         super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
@@ -126,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if (id == R.id.adminButton){
+            Intent i = new Intent(this, AdminMenu.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
@@ -202,15 +217,6 @@ public class MainActivity extends AppCompatActivity {
         mainListView.setAdapter(myCursorAdapter);
     }
 
-    public void flipToNext(View view){
-        int count = viewFlipper.getChildCount();
-        int displayedChildIndex = viewFlipper.getDisplayedChild();
-        if (displayedChildIndex != (count-1)){
-            viewFlipper.setDisplayedChild(displayedChildIndex + 1);
-        }
-        else
-            viewFlipper.setDisplayedChild(0);
-    }
 
     public void populateChart1(){
 
@@ -381,6 +387,7 @@ public class MainActivity extends AppCompatActivity {
             xAxis.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
 
             YAxis yAxis = chart3.getYAxis();
+            yAxis.setEnabled(false);
             //yAxis.setTypeface(tf);
             yAxis.setLabelCount(5);
             yAxis.setTextSize(9f);
