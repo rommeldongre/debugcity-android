@@ -9,10 +9,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.MediaMetadata;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.media.MediaItemMetadata;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +25,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +70,7 @@ public class UserAdd extends ActionBarActivity {
                 .setMessage("Save this Incident?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
+                        // adding to local database
                         Incident incident = new Incident();
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
@@ -68,6 +80,29 @@ public class UserAdd extends ActionBarActivity {
                         incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);
                         Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
+
+                        //adding to web mySQL database
+                        RequestParams params = new RequestParams();
+                        params.put("lat", 10);
+                        params.put("lng", 10);
+                        params.put("cat", "traffic");
+                        params.put("pic", "none");
+                        params.put("locality", 400007);
+                        params.put("submitter", "rommel");
+                        params.put("owner", "IPS");
+                        params.put("state", "open");
+                        params.put("severity", 3);
+                        params.put("notes", "note");
+                        params.put("votes", 1);
+
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("token", 0);
+                            invokeWS(jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 
                         finish();
                     }
@@ -79,6 +114,54 @@ public class UserAdd extends ActionBarActivity {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void invokeWS(JSONObject jsonObject) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post("http://frrndlease.com/dbctv1/service/GetLocations", jsonObject, new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(String response){
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    ShowAlert("Response:", obj.get("returnCode") + "\n"
+                            + obj.get("count") + "\n"
+                            + obj.get("locality") + "\n"
+                            + obj.get("returnToken"), UserAdd.this);
+
+                    /*
+                    if (obj.getBoolean("status")) {
+                        Toast.makeText(getApplicationContext(), "You are successfully registered!", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), obj.getString("errorString"), Toast.LENGTH_LONG).show();
+                    }
+                    */
+
+
+
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    ShowAlert("JSONException:", e.getMessage(), UserAdd.this);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Throwable error, String content){
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                Toast.makeText(getApplicationContext(), "StatusCode: " + String.valueOf(statusCode), Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -212,3 +295,4 @@ public class UserAdd extends ActionBarActivity {
         return pincode;
     }
 }
+
