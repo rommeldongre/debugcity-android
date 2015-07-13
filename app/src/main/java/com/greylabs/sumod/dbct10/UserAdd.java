@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -29,13 +30,29 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -71,7 +88,7 @@ public class UserAdd extends ActionBarActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // adding to local database
-                        Incident incident = new Incident();
+                        final Incident incident = new Incident();
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
                         incident.setCategory(spinner.getSelectedItem().toString());
@@ -81,27 +98,81 @@ public class UserAdd extends ActionBarActivity {
                         db.addIncident(incident, UserAdd.this);
                         Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
 
-                        //adding to web mySQL database
-                        RequestParams params = new RequestParams();
-                        params.put("lat", 10);
-                        params.put("lng", 10);
-                        params.put("cat", "traffic");
-                        params.put("pic", "none");
-                        params.put("locality", 400007);
-                        params.put("submitter", "rommel");
-                        params.put("owner", "IPS");
-                        params.put("state", "open");
-                        params.put("severity", 3);
-                        params.put("notes", "note");
-                        params.put("votes", 1);
+                        Thread thread = new Thread(new Runnable(){
+                            @Override
+                            public void run() {
+                                try {
+                                    //Your code goes here
+                                    //adding to web mySQL database
+                                    JSONObject jsonObject = new JSONObject();
+                                    try {
+                                        jsonObject.put("lat", Double.valueOf(user_lat_editTextView.getText().toString()));
+                                        jsonObject.put("lng", Double.valueOf(user_long_editTextView.getText().toString()));
+                                        jsonObject.put("cat", spinner.getSelectedItem().toString());
+                                        jsonObject.put("pic", "none");
+                                        jsonObject.put("locality", incident.getPin_code());
+                                        //jsonObject.put("submitter", "not defined");
+                                        //jsonObject.put("owner", "not defined");
+                                        //jsonObject.put("state", "not defined");
+                                        //jsonObject.put("severity", 3);
+                                        //jsonObject.put("notes", "note");
+                                        //jsonObject.put("votes", 1);
 
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("token", 0);
-                            invokeWS(jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                                        HttpURLConnection httpcon;
+                                        String url = "http://frrndlease.com/dbctv1/service/SubmitBug";
+                                        String data = jsonObject.toString();
+                                        String result = null;
+                                        try{
+//Connect
+                                            httpcon = (HttpURLConnection) new URL(url).openConnection();
+                                            httpcon.setDoOutput(true);
+                                            httpcon.setRequestProperty("Content-Type", "application/json");
+                                            httpcon.setRequestProperty("Accept", "application/json");
+                                            httpcon.setRequestMethod("POST");
+                                            httpcon.connect();
+
+//Write
+                                            OutputStream os = httpcon.getOutputStream();
+                                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                                            writer.write(data);
+                                            writer.close();
+                                            os.close();
+
+//Read
+                                            BufferedReader br = new BufferedReader(new InputStreamReader(httpcon.getInputStream(),"UTF-8"));
+
+                                            String line = null;
+                                            StringBuilder sb = new StringBuilder();
+
+                                            while ((line = br.readLine()) != null) {
+                                                sb.append(line);
+                                            }
+
+                                            br.close();
+                                            result = sb.toString();
+
+                                            JSONObject response = new JSONObject(result);
+                                            ShowAlert("Response:", result, UserAdd.this);
+
+                                        } catch (UnsupportedEncodingException e) {
+                                            ShowAlert("UnsupportedEncodingException", e.getMessage(), UserAdd.this);
+                                            e.printStackTrace();
+                                        } catch (IOException e) {
+                                            ShowAlert("IOException", e.getMessage(), UserAdd.this);
+                                            e.printStackTrace();
+                                        }
+                                    } catch (JSONException e) {
+                                        ShowAlert("JSONException", e.getMessage(), UserAdd.this);
+                                        e.printStackTrace();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        thread.start();
+
 
 
                         finish();
@@ -116,53 +187,6 @@ public class UserAdd extends ActionBarActivity {
                 .show();
     }
 
-    private void invokeWS(JSONObject jsonObject) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.post("http://frrndlease.com/dbctv1/service/GetLocations", jsonObject, new AsyncHttpResponseHandler(){
-            @Override
-            public void onSuccess(String response){
-                try {
-                    JSONObject obj = new JSONObject(response);
-
-                    ShowAlert("Response:", obj.get("returnCode") + "\n"
-                            + obj.get("count") + "\n"
-                            + obj.get("locality") + "\n"
-                            + obj.get("returnToken"), UserAdd.this);
-
-                    /*
-                    if (obj.getBoolean("status")) {
-                        Toast.makeText(getApplicationContext(), "You are successfully registered!", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), obj.getString("errorString"), Toast.LENGTH_LONG).show();
-                    }
-                    */
-
-
-
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    ShowAlert("JSONException:", e.getMessage(), UserAdd.this);
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Throwable error, String content){
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                Toast.makeText(getApplicationContext(), "StatusCode: " + String.valueOf(statusCode), Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
