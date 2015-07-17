@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -98,83 +99,15 @@ public class UserAdd extends ActionBarActivity {
                         db.addIncident(incident, UserAdd.this);
                         Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
 
-                        Thread thread = new Thread(new Runnable(){
+                        final Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                try {
-                                    //Your code goes here
-                                    //adding to web mySQL database
-                                    JSONObject jsonObject = new JSONObject();
-                                    try {
-                                        jsonObject.put("lat", Double.valueOf(user_lat_editTextView.getText().toString()));
-                                        jsonObject.put("lng", Double.valueOf(user_long_editTextView.getText().toString()));
-                                        jsonObject.put("cat", spinner.getSelectedItem().toString());
-                                        jsonObject.put("pic", "none");
-                                        jsonObject.put("locality", incident.getPin_code());
-                                        //jsonObject.put("submitter", "not defined");
-                                        //jsonObject.put("owner", "not defined");
-                                        //jsonObject.put("state", "not defined");
-                                        //jsonObject.put("severity", 3);
-                                        //jsonObject.put("notes", "note");
-                                        //jsonObject.put("votes", 1);
-
-                                        HttpURLConnection httpcon;
-                                        String url = "http://frrndlease.com/dbctv1/service/SubmitBug";
-                                        String data = jsonObject.toString();
-                                        String result = null;
-                                        try{
-//Connect
-                                            httpcon = (HttpURLConnection) new URL(url).openConnection();
-                                            httpcon.setDoOutput(true);
-                                            httpcon.setRequestProperty("Content-Type", "application/json");
-                                            httpcon.setRequestProperty("Accept", "application/json");
-                                            httpcon.setRequestMethod("POST");
-                                            httpcon.connect();
-
-//Write
-                                            OutputStream os = httpcon.getOutputStream();
-                                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                                            writer.write(data);
-                                            writer.close();
-                                            os.close();
-
-//Read
-                                            BufferedReader br = new BufferedReader(new InputStreamReader(httpcon.getInputStream(),"UTF-8"));
-
-                                            String line = null;
-                                            StringBuilder sb = new StringBuilder();
-
-                                            while ((line = br.readLine()) != null) {
-                                                sb.append(line);
-                                            }
-
-                                            br.close();
-                                            result = sb.toString();
-
-                                            JSONObject response = new JSONObject(result);
-                                            ShowAlert("Response:", result, UserAdd.this);
-
-                                        } catch (UnsupportedEncodingException e) {
-                                            ShowAlert("UnsupportedEncodingException", e.getMessage(), UserAdd.this);
-                                            e.printStackTrace();
-                                        } catch (IOException e) {
-                                            ShowAlert("IOException", e.getMessage(), UserAdd.this);
-                                            e.printStackTrace();
-                                        }
-                                    } catch (JSONException e) {
-                                        ShowAlert("JSONException", e.getMessage(), UserAdd.this);
-                                        e.printStackTrace();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                                WebService webService = new WebService();
+                                webService.SubmitBug(incident);
                             }
                         });
 
                         thread.start();
-
-
-
                         finish();
                     }
                 })

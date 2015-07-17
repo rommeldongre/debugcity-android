@@ -11,7 +11,9 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         populateChart2();
         populateChart3();
 
+        MyTest();
     }
 
     @Override
@@ -455,16 +458,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void Query(){
-        Cursor cursor = db.getCursorByRawQuery("SELECT CATEGORY, MAX(C) as MOST FROM(SELECT CATEGORY, C FROM(SELECT PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
-                "GROUP BY PINCODE, CATEGORY ORDER BY CATEGORY) ORDER BY CATEGORY) GROUP BY CATEGORY");
-        cursor.moveToFirst();
-        for (int i = 0; i<cursor.getCount(); i++){
-            ShowAlert(String.valueOf(i+1) + ":", cursor.getString(cursor.getColumnIndex("CATEGORY")) + " | " +
-            cursor.getString(cursor.getColumnIndex("MOST")));
-            cursor.moveToNext();
+    public void MyTest(){
+        List<String> localities;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        WebService webService = new WebService();
+        localities = webService.getLocations(this);
+
+        for (int i=0; i<localities.size(); i++){
+            ShowAlert("Localities:", localities.get(i));
         }
+
     }
+
 }
 
 
