@@ -64,6 +64,7 @@ public class UserAdd extends ActionBarActivity {
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     DBHandler db;
+    //WebService webService = new WebService();
     TextView user_lat_editTextView;
     TextView user_long_editTextView;
     Spinner spinner;
@@ -71,6 +72,7 @@ public class UserAdd extends ActionBarActivity {
     Bitmap bitmap;
     double latitude;
     double longitude;
+    WebService webService = new WebService(this);
 
     public void buttonSelectImage(View view){
         Intent i = new Intent();
@@ -97,17 +99,9 @@ public class UserAdd extends ActionBarActivity {
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);
-                        Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
 
-                        final Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                WebService webService = new WebService();
-                                webService.SubmitBug(incident);
-                            }
-                        });
+                        new SubmitBugAsync().execute(incident);
 
-                        thread.start();
                         finish();
                     }
                 })
@@ -120,6 +114,20 @@ public class UserAdd extends ActionBarActivity {
                 .show();
     }
 
+    private class SubmitBugAsync extends AsyncTask<Incident, Void, Integer>{
+
+        @Override
+        protected Integer doInBackground(Incident... params) {
+            return webService.SubmitBug(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer returnCode) {
+            if (returnCode == 0) {
+                Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -160,7 +168,7 @@ public class UserAdd extends ActionBarActivity {
 
 
         //user_imageView.setImageBitmap(photo);
-        List<String> categoryList = db.getCategoryList(this);
+        List<String> categoryList = webService.getCategories();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, categoryList);
         spinner.setAdapter(adapter);
 

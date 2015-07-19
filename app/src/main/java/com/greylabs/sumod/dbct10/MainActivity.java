@@ -1,6 +1,7 @@
 package com.greylabs.sumod.dbct10;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +40,10 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,12 +54,14 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = "MainActivity";
     DBHandler db;
     ListView mainListView;
     ViewFlipper viewFlipper;
     BarChart chart1;
     BarChart chart2;
     RadarChart chart3;
+    WebService webService = new WebService(this);
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -110,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
         viewFlipper.addView(chart2);
         viewFlipper.addView(chart3);
         populateChart1();
-        populateChart2();
-        populateChart3();
+        //populateChart2();
+        //populateChart3();
 
         MyTest();
     }
@@ -120,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         populateChart1();
         populateChart2();
-        populateChart3();
+        //populateChart3();
         super.onResume();
     }
 
@@ -224,23 +232,49 @@ public class MainActivity extends AppCompatActivity {
 
     public void populateChart1() {
 
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, PINCODE, COUNT(*) as C FROM INCIDENTS GROUP BY PINCODE ORDER BY C DESC");
-        int count = cursor.getCount();
-        cursor.moveToFirst();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        List<String> pincodes = webService.getLocations();
+        for (int i=0; i<pincodes.size(); i++){
+            Log.i(TAG, pincodes.get(i));
+        }
+        List<String> categories = webService.getCategories();
+        for (int i=0; i<categories.size(); i++){
+            Log.i(TAG, categories.get(i));
+        }
+
+        List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
-            cursor.moveToNext();
+        int total_incidents = 0;
+
+        try {
+            for (int i = 0; i < pincodes.size(); i++) {
+                locationVectors.add(webService.getLocationVector(pincodes.get(i)));
+            }
+
+            for (int i = 0; i < locationVectors.size(); i++) {
+                for (int j = 0; j < categories.size(); j++) {
+
+                    if (locationVectors.get(i).has(categories.get(j)))
+                        total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
+
+                }
+                barEntries.add(new BarEntry(total_incidents, i));
+                Log.i(TAG + "BarEntry " + i +":", String.valueOf(total_incidents));
+            }
+
+        }
+        catch (JSONException e){
+            Log.e(TAG, e.getMessage());
         }
 
         BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
 
         ArrayList<String> labels = new ArrayList<String>();
-        //labels.add("test");labels.add("test2");labels.add("test3");
-        cursor.moveToFirst();
-        for (int i = 0; i < count; i++) {
-            labels.add(cursor.getString(cursor.getColumnIndex("PINCODE")));
-            cursor.moveToNext();
+
+        for (int i=0; i<pincodes.size(); i++){
+            labels.add(pincodes.get(i));
         }
 
         BarData data = new BarData(labels, barDataset);
@@ -464,14 +498,22 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        WebService webService = new WebService();
-        localities = webService.getLocations(this);
+        localities = webService.getCategories();
+        try {
 
-        for (int i=0; i<localities.size(); i++){
-            ShowAlert("Localities:", localities.get(i));
+
+            for (int i = 0; i < localities.size(); i++) {
+                ShowAlert("general: ", String.valueOf(webService.getLocationVector("411038").getInt("General")));
+                ShowAlert("traffic: ", String.valueOf(webService.getLocationVector("411038").getInt("traffic")));
+                Log.i(TAG, "Localities: " + localities.get(i));
+            }
         }
+        catch (JSONException e){
 
+        }
     }
+
+
 
 }
 
