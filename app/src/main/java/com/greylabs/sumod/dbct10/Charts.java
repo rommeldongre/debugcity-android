@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteException;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -47,11 +48,21 @@ public class Charts {
     }
 
     public BarChart populateChart1() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         List<String> pincodes = webService.getLocations();
+        for (int i=0; i<pincodes.size(); i++){
+            Log.i(TAG, pincodes.get(i));
+        }
         List<String> categories = webService.getCategories();
+        for (int i=0; i<categories.size(); i++){
+            Log.i(TAG, categories.get(i));
+        }
+
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        int total_incidents = 0;
 
         try {
             for (int i = 0; i < pincodes.size(); i++) {
@@ -59,13 +70,17 @@ public class Charts {
             }
 
             for (int i = 0; i < locationVectors.size(); i++) {
+                int total_incidents = 0;
+
                 for (int j = 0; j < categories.size(); j++) {
 
-                    total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
-
-
+                    if (locationVectors.get(i).has(categories.get(j))) {
+                        total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
+                        Log.i(TAG, categories.get(j) + ": " + locationVectors.get(i).getInt(categories.get(j)));
+                    }
                 }
                 barEntries.add(new BarEntry(total_incidents, i));
+
             }
 
         }
@@ -110,7 +125,11 @@ public class Charts {
 
         return chart1;
     }
-/*
+
+
+
+  /*
+
     public BarChart populateChart2() {
         List<String> categories = webService.getCategories();
         List<String> pincodes = webService.getLocations();
@@ -133,9 +152,112 @@ public class Charts {
 
         }
 
+
+
+
         return barChart;
     }
 */
+
+
+    public void populateChart3(){
+
+        List<String> pincodes = webService.getLocations();
+        List<String> categories = webService.getCategories();
+
+        JSONObject present_LocationVector = webService.getLocationVector("411038");
+
+        List<JSONObject> locationVectors = new ArrayList<>();
+        ArrayList<String> xVals = new ArrayList<>(); //labels
+        ArrayList<Entry> yVals1 = new ArrayList<>();
+        ArrayList<Entry> yVals2 = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < pincodes.size(); i++) {
+                locationVectors.add(webService.getLocationVector(pincodes.get(i)));
+            }
+
+
+            for (int j = 0; j<categories.size(); j++){
+                int ideal_score = 0;
+
+                for (int i = 0; i<locationVectors.size(); i++){
+                    if (locationVectors.get(i).has(categories.get(j))){
+                        if (locationVectors.get(i).getInt(categories.get(j)) > ideal_score){
+                            ideal_score = locationVectors.get(i).getInt(categories.get(j));
+                            yVals2.add(new Entry(ideal_score, j));
+                        }
+                    }
+                }
+            }
+
+            for (int i=0; i<categories.size(); i++){
+                xVals.add(categories.get(i));
+            }
+
+            //RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
+            //radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+            //radarDataSet1.setDrawFilled(true);
+            //radarDataSet1.setLineWidth(2f);
+
+            RadarDataSet radarDataSet2 = new RadarDataSet(yVals2, "Ideal");
+            radarDataSet2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+            radarDataSet2.setDrawFilled(false);
+            radarDataSet2.setLineWidth(2f);
+
+            ArrayList<RadarDataSet> radarDataSet = new ArrayList<>();
+            //radarDataSet.add(radarDataSet1);
+            radarDataSet.add(radarDataSet2);
+
+            RadarData radarData = new RadarData(xVals, radarDataSet);
+
+            radarData.setValueTextSize(8f);
+            radarData.setDrawValues(false);
+
+            chart3.setData(radarData);
+            chart3.invalidate();
+
+            chart3.setDescription("");
+
+            MyMarkerView myMarkerView = new MyMarkerView(context, R.layout.custom_marker_view);
+            chart3.setMarkerView(myMarkerView);
+
+            //Styling
+            chart3.setBackgroundColor(context.getResources().getColor(R.color.button_material_dark));
+            chart3.setWebLineWidth(1.5f);
+            chart3.setWebColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+            chart3.setWebColorInner(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+            chart3.setWebLineWidthInner(0.75f);
+            chart3.setWebAlpha(100);
+
+            XAxis xAxis = chart3.getXAxis();
+            //xAxis.setTypeface(tf);
+            xAxis.setTextSize(9f);
+            xAxis.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+
+            YAxis yAxis = chart3.getYAxis();
+            yAxis.setEnabled(false);
+            //yAxis.setTypeface(tf);
+            yAxis.setLabelCount(5);
+            yAxis.setTextSize(9f);
+            yAxis.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+            yAxis.setStartAtZero(true);
+
+            Legend legend = chart3.getLegend();
+            legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+            legend.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+            //legend.setTypeface(tf);
+            legend.setXEntrySpace(7f);
+            legend.setYEntrySpace(5f);
+
+
+        }catch (JSONException e){
+            Log.e(TAG, e.getMessage());
+        }
+
+
+
+    }
 /*
     public void populateChart1() {
 

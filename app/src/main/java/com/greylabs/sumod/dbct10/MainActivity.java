@@ -120,16 +120,16 @@ public class MainActivity extends AppCompatActivity {
         viewFlipper.addView(chart3);
         populateChart1();
         //populateChart2();
-        //populateChart3();
+        populateChart3();
 
-        MyTest();
+        //MyTest();
     }
 
     @Override
     protected void onResume() {
         populateChart1();
         populateChart2();
-        //populateChart3();
+        populateChart3();
         super.onResume();
     }
 
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 barEntries.add(new BarEntry(total_incidents, i));
-                //Log.i(TAG + "BarEntry " + i +":", String.valueOf(total_incidents));
+
             }
 
         }
@@ -356,64 +356,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateChart3() {
+
+        List<String> pincodes = webService.getLocations();
+        List<String> categories = webService.getCategories();
+
         GPSTracker gps = new GPSTracker(this);
 
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addressList;
-        String pin_code = null;
+        String pin_code = "Unknown";
         try {
             addressList = geocoder.getFromLocation(gps.getLatitude(), gps.getLongitude(), 1);
             if (addressList.size() != 0) {
                 pin_code = addressList.get(0).getPostalCode();
             }
-            if (pin_code == null) {
-                pin_code = "Unknown";
-            }
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
             e.printStackTrace();
-            ShowAlert("Exception Caught:", e.getMessage());
         }
 
-        //if (pin_code != "Unknown") {
-        pin_code = "411038";
-            Cursor cursor1 = db.getCursorByRawQuery("SELECT ID, PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
-                    "WHERE PINCODE = " + pin_code + " GROUP BY CATEGORY ORDER BY CATEGORY");
+        JSONObject present_LocationVector = webService.getLocationVector(pin_code);
 
-            int count = cursor1.getCount();
-
-            ArrayList<Entry> yVals1 = new ArrayList<>();
-
-            cursor1.moveToFirst();
-            for (int i = 0; i < count; i++) {
-                yVals1.add(new Entry(cursor1.getInt(cursor1.getColumnIndex("C")), i));
-                cursor1.moveToNext();
-            }
-
-            /*
-            *
-            * to get ideal values:
-             */
-
-        Cursor cursor = db.getCursorByRawQuery("SELECT CATEGORY, MAX(C) as MOST FROM(SELECT CATEGORY, C FROM(SELECT PINCODE, CATEGORY, COUNT(*) as C FROM INCIDENTS " +
-                "GROUP BY PINCODE, CATEGORY ORDER BY CATEGORY) ORDER BY CATEGORY) GROUP BY CATEGORY");
+        List<JSONObject> locationVectors = new ArrayList<>();
+        ArrayList<String> xVals = new ArrayList<>(); //labels
+        ArrayList<Entry> yVals1 = new ArrayList<>();
         ArrayList<Entry> yVals2 = new ArrayList<>();
-        cursor.moveToFirst();
-        for (int i = 0; i<cursor.getCount(); i++){
-            yVals2.add(new Entry(cursor.getInt(cursor.getColumnIndex("MOST")), i));
-            //ShowAlert(String.valueOf(i + 1) + ":", cursor.getString(cursor.getColumnIndex("CATEGORY")) + " | " +
-              //      cursor.getString(cursor.getColumnIndex("MOST")));
-            cursor.moveToNext();
-        }
 
-
-            ArrayList<String> xVals = new ArrayList<>();
-            cursor.moveToFirst();
-            for (int i = 0; i < count; i++) {
-                xVals.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
-                cursor.moveToNext();
+        try {
+            for (int i = 0; i < pincodes.size(); i++) {
+                locationVectors.add(webService.getLocationVector(pincodes.get(i)));
             }
 
-            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
+            for (int j = 0; j<categories.size(); j++){
+                int ideal_score = 0;
+                for (int i = 0; i<locationVectors.size(); i++){
+
+                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) >= ideal_score){
+                        ideal_score = locationVectors.get(i).getInt(categories.get(j));
+                    }
+                }
+                yVals2.add(new Entry(ideal_score, j));
+
+                if (present_LocationVector.has(categories.get(j))){
+                    yVals1.add(new Entry(present_LocationVector.getInt(categories.get(j)), j));
+                    ShowAlert("presentValues:", String.valueOf(present_LocationVector.getInt(categories.get(j))));
+                }
+
+                xVals.add(categories.get(j));
+                //ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
+            }
+
+
+
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, "Fun");
             radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
             radarDataSet1.setDrawFilled(true);
             radarDataSet1.setLineWidth(2f);
@@ -467,15 +462,12 @@ public class MainActivity extends AppCompatActivity {
             //legend.setTypeface(tf);
             legend.setXEntrySpace(7f);
             legend.setYEntrySpace(5f);
-       // }
-        /*else {
-            chart3.setNoDataText("No Pincode Data Available");
-        }*/
-        try {
 
-        } catch (SQLiteException e) {
-            ShowAlert("Exception Caught:", e.getMessage());
+
+        }catch (JSONException e){
+            Log.e(TAG, e.getMessage());
         }
+
 
 
     }
