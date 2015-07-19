@@ -9,4 +9,9 @@
         android:title="@string/adminButton">
     </item>
 
+    <item
+        android:id="@+id/mapsActivity"
+        android:title="@string/map">
+    </item>
+
 </menu>

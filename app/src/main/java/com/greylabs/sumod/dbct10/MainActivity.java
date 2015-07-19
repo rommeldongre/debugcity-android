@@ -85,11 +85,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void gotoMapsActivity(View view) {
-        Intent i = new Intent(this, MapsActivity.class);
-        startActivity(i);
-    }
-
     public void flipToNext(View view) {
         int count = viewFlipper.getChildCount();
         int displayedChildIndex = viewFlipper.getDisplayedChild();
@@ -154,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.adminButton) {
             Intent i = new Intent(this, AdminMenu.class);
+            startActivity(i);
+        }
+
+        if (id == R.id.mapsActivity){
+            Intent i = new Intent(this, MapsActivity.class);
             startActivity(i);
         }
 
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, "411038");
             radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
             radarDataSet1.setDrawFilled(true);
             radarDataSet1.setLineWidth(2f);

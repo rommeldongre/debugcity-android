@@ -23,8 +23,10 @@
     <string name="refresh">REFRESH</string>
     <string name="submit">Submit</string>
     <string name="get_location">Get Location</string>
+    <string name="map">Map</string>
     <string name="shoot">Shoot</string>
     <string name="photo">Photo</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="title_activity_incident_details">IncidentDetails</string>
     <string name="title_activity_category_details">CategoryDetails</string>
     <string name="title_activity_incident_add">IncidentAdd</string>
@@ -32,4 +34,5 @@
     <string name="title_activity_my_location">MyLocationActivity</string>
     <string name="title_activity_user_add">UserAdd</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="DebugCity">DebugCity</string>
 </resources>

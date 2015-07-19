@@ -14,8 +14,8 @@
         android:text="@string/shoot"
         android:onClick="buttonShoot"
         android:id="@+id/button_shoot"
-        android:layout_alignTop="@+id/button_maps"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/button_flip" />
 
     <Button
         android:layout_width="wrap_content"
@@ -75,33 +75,8 @@
         android:id="@+id/button_flip"
         android:onClick="flipToNext"
         android:background="@android:drawable/ic_media_play"
-        android:layout_toEndOf="@+id/space"
-        android:layout_alignTop="@+id/space" />
-
-    <Button
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_maps"
-        android:background="@android:drawable/ic_menu_mapmode"
-        android:onClick="gotoMapsActivity"
-        android:layout_alignBottom="@+id/space2"
-        android:layout_toStartOf="@+id/space2" />
-
-    <Space
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/button_selectImage"
-        android:id="@+id/space"
-        android:layout_alignParentBottom="true"
-        android:layout_alignTop="@+id/button_selectImage" />
-
-    <Space
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/button_shoot"
-        android:id="@+id/space2"
-        android:layout_alignTop="@+id/button_flip"
-        android:layout_alignBottom="@+id/button_flip" />
+        android:layout_alignTop="@+id/button_selectImage"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
