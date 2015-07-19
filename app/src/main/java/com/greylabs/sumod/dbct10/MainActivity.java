@@ -40,6 +40,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.gson.JsonIOException;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
@@ -246,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
 
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        int total_incidents = 0;
 
         try {
             for (int i = 0; i < pincodes.size(); i++) {
@@ -254,14 +254,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             for (int i = 0; i < locationVectors.size(); i++) {
+                int total_incidents = 0;
                 for (int j = 0; j < categories.size(); j++) {
 
-                    if (locationVectors.get(i).has(categories.get(j)))
+                    if (locationVectors.get(i).has(categories.get(j))) {
                         total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
-
+                        Log.i(TAG, categories.get(j) + ": " + locationVectors.get(i).getInt(categories.get(j)));
+                    }
                 }
                 barEntries.add(new BarEntry(total_incidents, i));
-                Log.i(TAG + "BarEntry " + i +":", String.valueOf(total_incidents));
+                //Log.i(TAG + "BarEntry " + i +":", String.valueOf(total_incidents));
             }
 
         }
@@ -498,18 +500,17 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        localities = webService.getCategories();
+        localities = webService.getLocations();
         try {
 
 
             for (int i = 0; i < localities.size(); i++) {
-                ShowAlert("general: ", String.valueOf(webService.getLocationVector("411038").getInt("General")));
-                ShowAlert("traffic: ", String.valueOf(webService.getLocationVector("411038").getInt("traffic")));
+                ShowAlert("Pincode:", localities.get(i));
                 Log.i(TAG, "Localities: " + localities.get(i));
             }
         }
-        catch (JSONException e){
-
+        catch (JsonIOException e){
+            Log.e(TAG, e.getMessage());
         }
     }
 

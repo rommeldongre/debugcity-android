@@ -210,6 +210,9 @@ public class WebService {
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
+
+        Collections.sort(pincodes);
+
         return pincodes;
     }
 
@@ -252,7 +255,7 @@ public class WebService {
             result = sb.toString();
 
             JSONObject response = new JSONObject(result);
-            locationVector = new JSONObject("{" + response.getString("vector") + "}");
+            locationVector = new JSONObject(response.getString("locationVector"));
 
             httpcon.disconnect();
 
