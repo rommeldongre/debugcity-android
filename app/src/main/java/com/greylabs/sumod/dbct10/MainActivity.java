@@ -301,24 +301,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateChart2() {
-        Cursor cursor = db.getCursorByRawQuery("SELECT ID, CATEGORY, COUNT(*) as C FROM INCIDENTS GROUP BY CATEGORY ORDER BY C DESC");
-        int count = cursor.getCount();
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        List<String> categories = webService.getCategories();
+        List<String> pincodes = webService.getLocations();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        cursor.moveToFirst();
-        for (int i = 0; i < count; i++) {
-            barEntries.add(new BarEntry(cursor.getInt(cursor.getColumnIndex("C")), i));
-            cursor.moveToNext();
+        ArrayList<String> labels = new ArrayList<>();
+        List<JSONObject> locationVectors = new ArrayList<>();
+        int total_incidents;
+
+
+        try {
+            for (int i = 0; i < pincodes.size(); i++) {
+                locationVectors.add(webService.getLocationVector(pincodes.get(i)));
+            }
+
+            for (int j=0; j<categories.size(); j++){
+                total_incidents = 0;
+
+                for (int i=0; i<locationVectors.size(); i++){
+                    if (locationVectors.get(i).has(categories.get(j))) {
+                        Log.i("Location: " + pincodes.get(i) + ": ", "Before: " + String.valueOf(total_incidents));
+                        total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
+                        Log.i("Location: " + pincodes.get(i) + ": ", "After: " + String.valueOf(total_incidents));
+                    }
+                }
+                barEntries.add(new BarEntry(total_incidents, j));
+                labels.add(categories.get(j));
+            }
+        }
+        catch (JSONException e){
+            Log.e(TAG, e.getMessage());
         }
 
         BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
-
-        ArrayList<String> labels = new ArrayList<>();
-        cursor.moveToFirst();
-        for (int i = 0; i < count; i++) {
-            labels.add(cursor.getString(cursor.getColumnIndex("CATEGORY")));
-            cursor.moveToNext();
-        }
 
         BarData data = new BarData(labels, barDataset);
         chart2.setData(data);
@@ -345,7 +363,8 @@ public class MainActivity extends AppCompatActivity {
         yAxisRight.setEnabled(false);
         yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         xAxis.setDrawGridLines(false);
-        chart1.animateY(3000);
+        chart2.animateY(3000);
+
     }
 
     public void populateChart3() {
@@ -371,7 +390,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         JSONObject present_LocationVector = webService.getLocationVector("411038");
-        ShowAlert("Present LocationVector: ", present_LocationVector.toString());
         Log.i(TAG, present_LocationVector.toString());
 
         List<JSONObject> locationVectors = new ArrayList<>();
@@ -396,7 +414,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (present_LocationVector.has(categories.get(j))){
                     yVals1.add(new Entry(present_LocationVector.getInt(categories.get(j)), j));
-                    ShowAlert("presentValues:", String.valueOf(present_LocationVector.getInt(categories.get(j))));
                 }
 
                 xVals.add(categories.get(j));
@@ -405,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, "Fun");
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
             radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
             radarDataSet1.setDrawFilled(true);
             radarDataSet1.setLineWidth(2f);

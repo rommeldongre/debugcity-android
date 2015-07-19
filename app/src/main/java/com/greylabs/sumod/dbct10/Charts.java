@@ -53,13 +53,8 @@ public class Charts {
         StrictMode.setThreadPolicy(policy);
 
         List<String> pincodes = webService.getLocations();
-        for (int i=0; i<pincodes.size(); i++){
-            Log.i(TAG, pincodes.get(i));
-        }
         List<String> categories = webService.getCategories();
-        for (int i=0; i<categories.size(); i++){
-            Log.i(TAG, categories.get(i));
-        }
+
 
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -128,36 +123,68 @@ public class Charts {
 
 
 
-  /*
-
     public BarChart populateChart2() {
         List<String> categories = webService.getCategories();
         List<String> pincodes = webService.getLocations();
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
         List<JSONObject> locationVectors = new ArrayList<>();
-        BarChart barChart;
-        int[] categoryScore;
+        int total_incidents;
+
 
         try {
             for (int i = 0; i < pincodes.size(); i++) {
                 locationVectors.add(webService.getLocationVector(pincodes.get(i)));
             }
 
-            for (int i = 0; i < pincodes.size(); i++) {
-                for (int j = 0; j < categories.size(); j++) {
-                    locationVectors.get(i).get(categories.get(j));
+            for (int j=0; j<categories.size(); j++){
+                total_incidents = 0;
+
+                for (int i=0; i<locationVectors.size(); i++){
+                    if (locationVectors.get(i).has(categories.get(i)))
+                        total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
                 }
+                barEntries.add(new BarEntry(total_incidents, j));
+                labels.add(categories.get(j));
             }
         }
         catch (JSONException e){
-
+            Log.e(TAG, e.getMessage());
         }
 
+        BarDataSet barDataset = new BarDataSet(barEntries, "# of Incidents");
+
+        BarData data = new BarData(labels, barDataset);
+        chart2.setData(data);
+
+        chart2.setDescription("# of Incidents vs Category");
+        chart2.setDescriptionColor(context.getResources().getColor(R.color.material_blue_grey_800));
+
+        //Styling
+        chart2.setBackgroundColor(context.getResources().getColor(R.color.button_material_dark));
+        barDataset.setColor(context.getResources().getColor(R.color.material_blue_grey_800));
+
+        Legend legend = chart2.getLegend();
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(R.color.material_blue_grey_800);
+        legend.setColors(colors);
 
 
+        XAxis xAxis = chart2.getXAxis();
+        xAxis.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisLeft = chart2.getAxisLeft();
+        yAxisLeft.setEnabled(false);
+        yAxisLeft.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+        YAxis yAxisRight = chart2.getAxisRight();
+        yAxisRight.setEnabled(false);
+        yAxisRight.setTextColor(context.getResources().getColor(R.color.abc_primary_text_material_dark));
+        xAxis.setDrawGridLines(false);
+        chart2.animateY(3000);
 
-        return barChart;
+
+        return chart2;
     }
-*/
+
 
 
     public void populateChart3(){
