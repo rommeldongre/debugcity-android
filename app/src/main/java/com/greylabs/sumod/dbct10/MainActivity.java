@@ -237,13 +237,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         List<String> pincodes = webService.getLocations();
-        for (int i=0; i<pincodes.size(); i++){
-            Log.i(TAG, pincodes.get(i));
-        }
         List<String> categories = webService.getCategories();
-        for (int i=0; i<categories.size(); i++){
-            Log.i(TAG, categories.get(i));
-        }
 
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -259,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
 
                     if (locationVectors.get(i).has(categories.get(j))) {
                         total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
-                        Log.i(TAG, categories.get(j) + ": " + locationVectors.get(i).getInt(categories.get(j)));
                     }
                 }
                 barEntries.add(new BarEntry(total_incidents, i));
@@ -370,12 +363,16 @@ public class MainActivity extends AppCompatActivity {
             if (addressList.size() != 0) {
                 pin_code = addressList.get(0).getPostalCode();
             }
+            else
+                pin_code = "Unknown";
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
         }
 
-        JSONObject present_LocationVector = webService.getLocationVector(pin_code);
+        JSONObject present_LocationVector = webService.getLocationVector("411038");
+        ShowAlert("Present LocationVector: ", present_LocationVector.toString());
+        Log.i(TAG, present_LocationVector.toString());
 
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<String> xVals = new ArrayList<>(); //labels
