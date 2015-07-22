@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -62,12 +63,66 @@ public class MainActivity extends AppCompatActivity {
     BarChart chart1;
     BarChart chart2;
     RadarChart chart3;
+    Charts charts;
+    ProgressBar spinner;
     WebService webService = new WebService(this);
     double latitude;
     double longitude;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private class PopulateCharts extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected void onPreExecute() {
+
+            spinner.setVisibility(View.VISIBLE);
+            spinner.animate();
+
+            chart1 = (BarChart) findViewById(R.id.chart1);
+            chart1.setVisibility(View.GONE);
+            chart2 = (BarChart) findViewById(R.id.chart2);
+            chart2.setVisibility(View.GONE);
+            chart3 = (RadarChart) findViewById(R.id.chart3);
+            chart3.setVisibility(View.GONE);
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            populateChart1();
+            populateChart2();
+            populateChart3();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            chart1.setVisibility(View.VISIBLE);
+            chart2.setVisibility(View.VISIBLE);
+            chart3.setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.GONE);
+
+            ((ViewGroup) chart1.getParent()).removeView(chart1);
+            ((ViewGroup) chart2.getParent()).removeView(chart2);
+            ((ViewGroup) chart3.getParent()).removeView(chart3);
+
+            viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+            viewFlipper.addView(chart3);
+            viewFlipper.addView(chart1);
+            viewFlipper.addView(chart2);
+            super.onPostExecute(aVoid);
+        }
+    }
 
     public void buttonSelectImage(View view) {
         Intent i = new Intent();
@@ -103,9 +158,8 @@ public class MainActivity extends AppCompatActivity {
         //RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
 
         db = new DBHandler(this, null, null, 1);
-        chart1 = (BarChart) findViewById(R.id.chart1);
-        chart2 = (BarChart) findViewById(R.id.chart2);
-        chart3 = (RadarChart) findViewById(R.id.chart3);
+
+        spinner = (ProgressBar)findViewById(R.id.progressBar1);
 
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
@@ -117,14 +171,16 @@ public class MainActivity extends AppCompatActivity {
             gps.showSettingsAlert(this);
         }
 
-        ((ViewGroup) chart1.getParent()).removeView(chart1);
-        ((ViewGroup) chart2.getParent()).removeView(chart2);
-        ((ViewGroup) chart3.getParent()).removeView(chart3);
+        new PopulateCharts().execute();
 
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
-        viewFlipper.addView(chart3);
-        viewFlipper.addView(chart1);
-        viewFlipper.addView(chart2);
+        //((ViewGroup) chart1.getParent()).removeView(chart1);
+        //((ViewGroup) chart2.getParent()).removeView(chart2);
+        //((ViewGroup) chart3.getParent()).removeView(chart3);
+
+        //viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+        //viewFlipper.addView(chart3);
+        //viewFlipper.addView(chart1);
+        //viewFlipper.addView(chart2);
 
         //populateChart1();
         //populateChart2();
@@ -160,11 +216,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.adminButton) {
-            Intent i = new Intent(this, AdminMenu.class);
-            startActivity(i);
-        }
-
         if (id == R.id.mapsActivity){
             Intent i = new Intent(this, MapsActivity.class);
             startActivity(i);
@@ -183,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("resultCode", REQUEST_IMAGE_CAPTURE);
             startActivity(i);
         }
-        if (requestCode == SELECT_PICTURE) {
+        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
             String selectedImagePath = getPath(selectedImageUri);
             System.out.println("Image Path : " + selectedImagePath);
@@ -246,8 +297,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void populateChart1() {
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
 
         List<String> pincodes = webService.getLocations();
         List<String> categories = webService.getCategories();
@@ -287,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
         BarData data = new BarData(labels, barDataset);
         chart1.setData(data);
-        chart1.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
+        //Bday - chart1.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
         chart1.setDescription("# of Incidents vs PinCode");
         chart1.setDescriptionColor(getResources().getColor(R.color.abc_primary_text_material_dark));
 
@@ -296,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(R.color.material_blue_grey_800);
         legend.setColors(colors);
-        chart1.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+        //Bday - chart1.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
         barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
 
         XAxis xAxis = chart1.getXAxis();
@@ -310,13 +361,13 @@ public class MainActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
 
         chart1.setDescriptionColor(getResources().getColor(R.color.material_blue_grey_800));
-        chart1.animateY(3000);
+        //chart1.animateY(3000);
     }
 
     public void populateChart2() {
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
 
         List<String> categories = webService.getCategories();
         List<String> pincodes = webService.getLocations();
@@ -358,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
         chart2.setDescriptionColor(getResources().getColor(R.color.material_blue_grey_800));
 
         //Styling
-        chart2.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+        //Bday - chart2.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
         barDataset.setColor(getResources().getColor(R.color.material_blue_grey_800));
 
         Legend legend = chart2.getLegend();
@@ -376,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
         yAxisRight.setEnabled(false);
         yAxisRight.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
         xAxis.setDrawGridLines(false);
-        chart2.animateY(3000);
+        //chart2.animateY(3000);
 
     }
 
@@ -389,20 +440,17 @@ public class MainActivity extends AppCompatActivity {
 
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addressList;
-        String pin_code = "Unknown";
+        String pin_code="null";
 
         try {
-            addressList = geocoder.getFromLocation(latitude, longitude, 5);
-            if (addressList == null || addressList.size() == 0) {
+            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addressList != null && addressList.size() != 0 && addressList.get(0).getPostalCode() != null){
+                pin_code = addressList.get(0).getPostalCode();
+            }
+            else{
                 pin_code = "Unknown";
-            } else {
-                for (int i=0; i<5; i++) {
-                    pin_code = addressList.get(0).getPostalCode();
-                    //ShowAlert("Address: ", addressList.get(i).toString());
-                }
             }
         } catch (IOException e) {
-            ShowAlert("Pincode exception: ", e.getMessage());
             e.printStackTrace();
         }
 
@@ -424,9 +472,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             for (int j = 0; j<categories.size(); j++){
-                int ideal_score = 2^32;
+                int ideal_score = 0;
                 for (int i = 0; i<locationVectors.size(); i++){
-                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) < ideal_score){
+                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) > ideal_score){
                         ideal_score = locationVectors.get(i).getInt(categories.get(j));
                     }
                 }
@@ -437,19 +485,19 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 xVals.add(categories.get(j));
-                ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
+                //ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
             }
 
 
 
             RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
             radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
-            radarDataSet1.setDrawFilled(false);
+            radarDataSet1.setDrawFilled(true);
             radarDataSet1.setLineWidth(2f);
 
             RadarDataSet radarDataSet2 = new RadarDataSet(yVals2, "Ideal");
             radarDataSet2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-            radarDataSet2.setDrawFilled(true);
+            radarDataSet2.setDrawFilled(false);
             radarDataSet2.setLineWidth(2f);
 
             ArrayList<RadarDataSet> radarDataSet = new ArrayList<>();
@@ -470,7 +518,7 @@ public class MainActivity extends AppCompatActivity {
             chart3.setMarkerView(myMarkerView);
 
             //Styling
-            chart3.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+            //chart3.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
             chart3.setWebLineWidth(1.5f);
             chart3.setWebColor(getResources().getColor(R.color.abc_primary_text_material_dark));
             chart3.setWebColorInner(getResources().getColor(R.color.abc_primary_text_material_dark));
@@ -501,8 +549,6 @@ public class MainActivity extends AppCompatActivity {
         }catch (JSONException e){
             Log.e(TAG, e.getMessage());
         }
-
-
 
     }
 

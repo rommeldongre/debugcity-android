@@ -47,10 +47,7 @@ public class Charts {
         this.context = context;
     }
 
-    public BarChart populateChart1() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+    public BarChart populateChart1(Context context) {
 
         List<String> pincodes = webService.getLocations();
         List<String> categories = webService.getCategories();
@@ -123,7 +120,7 @@ public class Charts {
 
 
 
-    public BarChart populateChart2() {
+    public BarChart populateChart2(Context context) {
         List<String> categories = webService.getCategories();
         List<String> pincodes = webService.getLocations();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
@@ -187,12 +184,37 @@ public class Charts {
 
 
 
-    public void populateChart3(){
+    public RadarChart populateChart3(Context context){
 
         List<String> pincodes = webService.getLocations();
         List<String> categories = webService.getCategories();
 
-        JSONObject present_LocationVector = webService.getLocationVector("411038");
+        GPSTracker gps = new GPSTracker(context);
+
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addressList;
+        String pin_code = "Unknown";
+
+        try {
+            addressList = geocoder.getFromLocation(gps.getLatitude(), gps.getLongitude(), 5);
+            if (addressList == null || addressList.size() == 0) {
+                pin_code = "Unknown";
+            } else {
+                pin_code = addressList.get(0).getPostalCode();
+                //ShowAlert("Address: ", addressList.get(i).toString());
+
+            }
+        } catch (IOException e) {
+            //ShowAlert("Pincode exception: ", e.getMessage());
+            e.printStackTrace();
+        }
+
+
+
+        //ShowAlert("Pin_code: ", pin_code);
+
+        JSONObject present_LocationVector = webService.getLocationVector(pin_code);
+        Log.i(TAG, present_LocationVector.toString());
 
         List<JSONObject> locationVectors = new ArrayList<>();
         ArrayList<String> xVals = new ArrayList<>(); //labels
@@ -204,36 +226,37 @@ public class Charts {
                 locationVectors.add(webService.getLocationVector(pincodes.get(i)));
             }
 
-
             for (int j = 0; j<categories.size(); j++){
-                int ideal_score = 0;
-
+                int ideal_score = 2^32;
                 for (int i = 0; i<locationVectors.size(); i++){
-                    if (locationVectors.get(i).has(categories.get(j))){
-                        if (locationVectors.get(i).getInt(categories.get(j)) > ideal_score){
-                            ideal_score = locationVectors.get(i).getInt(categories.get(j));
-                            yVals2.add(new Entry(ideal_score, j));
-                        }
+                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) < ideal_score){
+                        ideal_score = locationVectors.get(i).getInt(categories.get(j));
                     }
                 }
+                yVals2.add(new Entry(ideal_score, j));
+
+                if (present_LocationVector.has(categories.get(j))){
+                    yVals1.add(new Entry(present_LocationVector.getInt(categories.get(j)), j));
+                }
+
+                xVals.add(categories.get(j));
+                //ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
             }
 
-            for (int i=0; i<categories.size(); i++){
-                xVals.add(categories.get(i));
-            }
 
-            //RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
-            //radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
-            //radarDataSet1.setDrawFilled(true);
-            //radarDataSet1.setLineWidth(2f);
+
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
+            radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+            radarDataSet1.setDrawFilled(false);
+            radarDataSet1.setLineWidth(2f);
 
             RadarDataSet radarDataSet2 = new RadarDataSet(yVals2, "Ideal");
             radarDataSet2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-            radarDataSet2.setDrawFilled(false);
+            radarDataSet2.setDrawFilled(true);
             radarDataSet2.setLineWidth(2f);
 
             ArrayList<RadarDataSet> radarDataSet = new ArrayList<>();
-            //radarDataSet.add(radarDataSet1);
+            radarDataSet.add(radarDataSet1);
             radarDataSet.add(radarDataSet2);
 
             RadarData radarData = new RadarData(xVals, radarDataSet);
@@ -283,7 +306,7 @@ public class Charts {
         }
 
 
-
+        return chart3;
     }
 /*
     public void populateChart1() {

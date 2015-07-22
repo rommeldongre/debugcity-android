@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,15 +128,15 @@ public class Incident {
 
         try {
             addressList = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addressList.size() != 0) {
-                pin_code = addressList.get(0).getPostalCode();
-            }
-            else{
+            if (addressList == null || addressList.size() == 0) {
                 pin_code = "Unknown";
+            } else {
+                pin_code = addressList.get(0).getPostalCode();
+                //ShowAlert("Address: ", addressList.get(i).toString());
             }
         } catch (IOException e) {
+            //ShowAlert("Pincode exception: ", e.getMessage());
             e.printStackTrace();
-            ShowAlert("Exception Caught:", e.getMessage(), context);
         }
 
     }

@@ -5,11 +5,6 @@
         android:orderInCategory="100" app:showAsAction="never" />
 
     <item
-        android:id="@+id/adminButton"
-        android:title="@string/adminButton">
-    </item>
-
-    <item
         android:id="@+id/mapsActivity"
         android:title="@string/map">
     </item>

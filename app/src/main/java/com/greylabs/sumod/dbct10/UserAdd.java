@@ -52,8 +52,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -65,8 +67,10 @@ public class UserAdd extends ActionBarActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     DBHandler db;
     //WebService webService = new WebService();
+    Incident incident = new Incident();
     TextView user_lat_editTextView;
     TextView user_long_editTextView;
+    TextView user_pincode_editTextView;
     Spinner spinner;
     ImageView user_imageView;
     Bitmap bitmap;
@@ -91,11 +95,12 @@ public class UserAdd extends ActionBarActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // adding to local database
-                        final Incident incident = new Incident();
+
                         incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
                         incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
                         incident.setCategory(spinner.getSelectedItem().toString());
                         incident.setPin_code(UserAdd.this);
+                        Toast.makeText(UserAdd.this, incident.getPin_code(), Toast.LENGTH_LONG).show();
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
                         db.addIncident(incident, UserAdd.this);
@@ -151,6 +156,7 @@ public class UserAdd extends ActionBarActivity {
         db = new DBHandler(this, null, null, 1);
         user_lat_editTextView = (TextView) findViewById(R.id.user_lat_editTextView);
         user_long_editTextView = (TextView) findViewById(R.id.user_long_editTextView);
+        user_pincode_editTextView = (TextView) findViewById(R.id.user_pincode_editTextView);
         spinner = (Spinner) findViewById(R.id.spinner);
         user_imageView = (ImageView) findViewById(R.id.user_imageView);
 
@@ -181,8 +187,15 @@ public class UserAdd extends ActionBarActivity {
 
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
-            user_lat_editTextView.setText(String.valueOf(gps.getLatitude()));
-            user_long_editTextView.setText(String.valueOf(gps.getLongitude()));
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.FLOOR);
+            double shortLat = Double.valueOf(df.format(latitude));
+            double shortLng = Double.valueOf(df.format(longitude));
+
+            user_lat_editTextView.setText(String.valueOf(shortLat));
+            user_long_editTextView.setText(String.valueOf(shortLng));
+            user_pincode_editTextView.setText(incident.getPin_code());
 
         }
         else{
