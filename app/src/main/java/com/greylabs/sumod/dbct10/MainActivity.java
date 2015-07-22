@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     BarChart chart2;
     RadarChart chart3;
     WebService webService = new WebService(this);
+    double latitude;
+    double longitude;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -105,26 +107,37 @@ public class MainActivity extends AppCompatActivity {
         chart2 = (BarChart) findViewById(R.id.chart2);
         chart3 = (RadarChart) findViewById(R.id.chart3);
 
+        GPSTracker gps = new GPSTracker(this);
+        if(gps.canGetLocation()){
+
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+        }
+        else{
+            gps.showSettingsAlert(this);
+        }
+
         ((ViewGroup) chart1.getParent()).removeView(chart1);
         ((ViewGroup) chart2.getParent()).removeView(chart2);
         ((ViewGroup) chart3.getParent()).removeView(chart3);
 
         viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+        viewFlipper.addView(chart3);
         viewFlipper.addView(chart1);
         viewFlipper.addView(chart2);
-        viewFlipper.addView(chart3);
-        populateChart1();
+
+        //populateChart1();
         //populateChart2();
-        populateChart3();
+        //populateChart3();
 
         //MyTest();
     }
 
     @Override
     protected void onResume() {
-        populateChart1();
-        populateChart2();
-        populateChart3();
+        //populateChart1();
+        //populateChart2();
+        //populateChart3();
         super.onResume();
     }
 
@@ -377,19 +390,27 @@ public class MainActivity extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addressList;
         String pin_code = "Unknown";
+
         try {
-            addressList = geocoder.getFromLocation(gps.getLatitude(), gps.getLongitude(), 1);
-            if (addressList.size() != 0) {
-                pin_code = addressList.get(0).getPostalCode();
-            }
-            else
+            addressList = geocoder.getFromLocation(latitude, longitude, 5);
+            if (addressList == null || addressList.size() == 0) {
                 pin_code = "Unknown";
+            } else {
+                for (int i=0; i<5; i++) {
+                    pin_code = addressList.get(0).getPostalCode();
+                    //ShowAlert("Address: ", addressList.get(i).toString());
+                }
+            }
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            ShowAlert("Pincode exception: ", e.getMessage());
             e.printStackTrace();
         }
 
-        JSONObject present_LocationVector = webService.getLocationVector("411038");
+
+
+        //ShowAlert("Pin_code: ", pin_code);
+
+        JSONObject present_LocationVector = webService.getLocationVector(pin_code);
         Log.i(TAG, present_LocationVector.toString());
 
         List<JSONObject> locationVectors = new ArrayList<>();
@@ -403,10 +424,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             for (int j = 0; j<categories.size(); j++){
-                int ideal_score = 0;
+                int ideal_score = 2^32;
                 for (int i = 0; i<locationVectors.size(); i++){
-
-                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) >= ideal_score){
+                    if (locationVectors.get(i).has(categories.get(j)) && locationVectors.get(i).getInt(categories.get(j)) < ideal_score){
                         ideal_score = locationVectors.get(i).getInt(categories.get(j));
                     }
                 }
@@ -417,19 +437,19 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 xVals.add(categories.get(j));
-                //ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
+                ShowAlert("Ideal Score:", categories.get(j) + ": " + ideal_score);
             }
 
 
 
-            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, "411038");
+            RadarDataSet radarDataSet1 = new RadarDataSet(yVals1, pin_code);
             radarDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
-            radarDataSet1.setDrawFilled(true);
+            radarDataSet1.setDrawFilled(false);
             radarDataSet1.setLineWidth(2f);
 
             RadarDataSet radarDataSet2 = new RadarDataSet(yVals2, "Ideal");
             radarDataSet2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-            radarDataSet2.setDrawFilled(false);
+            radarDataSet2.setDrawFilled(true);
             radarDataSet2.setLineWidth(2f);
 
             ArrayList<RadarDataSet> radarDataSet = new ArrayList<>();

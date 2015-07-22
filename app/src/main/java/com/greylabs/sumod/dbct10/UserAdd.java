@@ -123,6 +123,8 @@ public class UserAdd extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Integer returnCode) {
+            if (returnCode!=0)
+                ShowAlert("ReturnCode:", String.valueOf(returnCode), UserAdd.this);
             if (returnCode == 0) {
                 Toast.makeText(UserAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
             }
@@ -166,6 +168,8 @@ public class UserAdd extends ActionBarActivity {
                 break;
         }
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         //user_imageView.setImageBitmap(photo);
         List<String> categoryList = webService.getCategories();

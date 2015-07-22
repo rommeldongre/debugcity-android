@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DBCT1.0</string>
+    <string name="app_name">Debug City v1</string>
     <string name="adminButton">Admin</string>
     <string name="button_addIncident">Add</string>
     <string name="button_addCategory">Add</string>

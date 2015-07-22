@@ -3,12 +3,17 @@ package com.greylabs.sumod.dbct10;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -41,7 +46,7 @@ public class WebService {
             jsonObject.put("lat", incident.getLatitude());
             jsonObject.put("lng", incident.getLongitude());
             jsonObject.put("cat", incident.getCategory());
-            jsonObject.put("pic", "none");
+            jsonObject.put("pic", encodeTobase64(incident.getImage()));
             jsonObject.put("locality", incident.getPin_code());
             jsonObject.put("submitter", "not defined");
             jsonObject.put("owner", "not defined");
@@ -264,6 +269,23 @@ public class WebService {
         }
 
         return locationVector;
+    }
+
+    public static String encodeTobase64(Bitmap image)
+    {
+        Bitmap immagex=image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        Log.e("LOOK", imageEncoded);
+        return imageEncoded;
+    }
+    public static Bitmap decodeBase64(String input)
+    {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
     public SearchBugReturnObject SearchBug(int token){

@@ -8,16 +8,35 @@
         android:id="@+id/imgLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/grey_labs_logo" />
+        android:src="@drawable/grey_labs_logo"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/DebugCity"
+        android:text="DebugCity v1.0"
         android:textSize="@dimen/abc_text_size_large_material"
         android:id="@+id/textView"
         android:layout_below="@+id/imgLogo"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Designed and Developed by Grey Labs in Pune"
+        android:textSize="@dimen/abc_text_size_caption_material"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Copyright Grey Labs. All Rights Reserved."
+        android:textSize="@dimen/abc_text_size_caption_material"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

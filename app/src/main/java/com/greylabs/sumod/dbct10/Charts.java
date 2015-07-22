@@ -141,7 +141,7 @@ public class Charts {
                 total_incidents = 0;
 
                 for (int i=0; i<locationVectors.size(); i++){
-                    if (locationVectors.get(i).has(categories.get(i)))
+                    if (locationVectors.get(i).has(categories.get(j)))
                         total_incidents = total_incidents + locationVectors.get(i).getInt(categories.get(j));
                 }
                 barEntries.add(new BarEntry(total_incidents, j));
