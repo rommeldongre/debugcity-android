@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -40,8 +41,10 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.gson.JsonIOException;
+import com.github.mikephil.charting.utils.Highlight;
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
@@ -64,21 +67,25 @@ public class MainActivity extends AppCompatActivity {
     BarChart chart2;
     RadarChart chart3;
     Charts charts;
-    ProgressBar spinner;
+    ProgressBar progressbar_spinner;
     WebService webService = new WebService(this);
+    Button button_flip;
     double latitude;
     double longitude;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private class PopulateCharts extends AsyncTask<Void, Void, Void>{
+    private class PopulateCharts extends AsyncTask<String, Void, Void>{
 
         @Override
         protected void onPreExecute() {
 
-            spinner.setVisibility(View.VISIBLE);
-            spinner.animate();
+            progressbar_spinner.setVisibility(View.VISIBLE);
+            progressbar_spinner.animate();
+
+            button_flip.setVisibility(View.GONE);
+            button_flip.setEnabled(false);
 
             chart1 = (BarChart) findViewById(R.id.chart1);
             chart1.setVisibility(View.GONE);
@@ -91,11 +98,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
 
             populateChart1();
             populateChart2();
-            populateChart3();
+            populateChart3(params[0]);
             return null;
         }
 
@@ -110,7 +117,11 @@ public class MainActivity extends AppCompatActivity {
             chart1.setVisibility(View.VISIBLE);
             chart2.setVisibility(View.VISIBLE);
             chart3.setVisibility(View.VISIBLE);
-            spinner.setVisibility(View.GONE);
+            progressbar_spinner.setEnabled(false);
+            progressbar_spinner.setVisibility(View.GONE);
+
+            button_flip.setVisibility(View.VISIBLE);
+            button_flip.setEnabled(true);
 
             ((ViewGroup) chart1.getParent()).removeView(chart1);
             ((ViewGroup) chart2.getParent()).removeView(chart2);
@@ -159,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
 
         db = new DBHandler(this, null, null, 1);
 
-        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        button_flip = (Button) findViewById(R.id.button_flip);
+
+        progressbar_spinner = (ProgressBar)findViewById(R.id.progressBar1);
 
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
@@ -171,7 +184,19 @@ public class MainActivity extends AppCompatActivity {
             gps.showSettingsAlert(this);
         }
 
-        new PopulateCharts().execute();
+        LatLng latLng = new LatLng(latitude, longitude);
+
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        List<Address> addressList = null;
+        try {
+            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+            //ShowAlert("Address:", addressList.get(0).toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String pin_code = addressList.get(0).getPostalCode();
+
+        new PopulateCharts().execute(pin_code);
 
         //((ViewGroup) chart1.getParent()).removeView(chart1);
         //((ViewGroup) chart2.getParent()).removeView(chart2);
@@ -300,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
 
-        List<String> pincodes = webService.getLocations();
+        final List<String> pincodes = webService.getLocations();
         List<String> categories = webService.getCategories();
 
         List<JSONObject> locationVectors = new ArrayList<>();
@@ -361,6 +386,23 @@ public class MainActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
 
         chart1.setDescriptionColor(getResources().getColor(R.color.material_blue_grey_800));
+
+        chart1.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry entry, int i, Highlight highlight) {
+                String pin_code = pincodes.get(entry.getXIndex());
+                Intent intent = new Intent(MainActivity.this, SpiderChartActivity.class);
+                intent.putExtra("pin_code", pin_code);
+                Log.i(TAG, pin_code);
+
+                startActivity(intent);
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
         //chart1.animateY(3000);
     }
 
@@ -431,28 +473,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void populateChart3() {
+    public void populateChart3(String pin_code) {
 
         List<String> pincodes = webService.getLocations();
         List<String> categories = webService.getCategories();
 
-        GPSTracker gps = new GPSTracker(this);
+        //GPSTracker gps = new GPSTracker(this);
 
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        List<Address> addressList;
-        String pin_code="null";
+        //Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        //List<Address> addressList;
+        //String pin_code="null";
+        //double latitude = latLng.latitude;
+        //double longitude = latLng.longitude;
 
-        try {
-            addressList = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addressList != null && addressList.size() != 0 && addressList.get(0).getPostalCode() != null){
-                pin_code = addressList.get(0).getPostalCode();
-            }
-            else{
-                pin_code = "Unknown";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    addressList = geocoder.getFromLocation(latitude, longitude, 1);
+        //    if (addressList != null && addressList.size() != 0 && addressList.get(0).getPostalCode() != null){
+        //        pin_code = addressList.get(0).getPostalCode();
+        //    }
+        //    else{
+        //        pin_code = "Unknown";
+        //    }
+        //} catch (IOException e) {
+        //    e.printStackTrace();
+        //}
 
 
 
@@ -573,17 +617,12 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         localities = webService.getLocations();
-        try {
 
 
             for (int i = 0; i < localities.size(); i++) {
                 ShowAlert("Pincode:", localities.get(i));
                 Log.i(TAG, "Localities: " + localities.get(i));
             }
-        }
-        catch (JsonIOException e){
-            Log.e(TAG, e.getMessage());
-        }
     }
 
 

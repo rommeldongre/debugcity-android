@@ -21,7 +21,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.gson.JsonIOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;

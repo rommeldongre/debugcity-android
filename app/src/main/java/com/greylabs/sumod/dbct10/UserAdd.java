@@ -76,6 +76,7 @@ public class UserAdd extends ActionBarActivity {
     Bitmap bitmap;
     double latitude;
     double longitude;
+    String pin_code;
     WebService webService = new WebService(this);
 
     public void buttonSelectImage(View view){
@@ -96,10 +97,11 @@ public class UserAdd extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // adding to local database
 
-                        incident.setLatitude(Double.valueOf(user_lat_editTextView.getText().toString()));
-                        incident.setLongitude(Double.valueOf(user_long_editTextView.getText().toString()));
+                        incident.setLatitude(latitude);
+                        incident.setLongitude(longitude);
                         incident.setCategory(spinner.getSelectedItem().toString());
-                        incident.setPin_code(UserAdd.this);
+
+                        incident.setPin_code(pin_code);
                         Toast.makeText(UserAdd.this, incident.getPin_code(), Toast.LENGTH_LONG).show();
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();
                         incident.setImage(bitmap);
@@ -188,6 +190,17 @@ public class UserAdd extends ActionBarActivity {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            List<Address> addressList = null;
+            try {
+                addressList = geocoder.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            pin_code = addressList.get(0).getPostalCode();
+
+
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.FLOOR);
             double shortLat = Double.valueOf(df.format(latitude));
@@ -195,7 +208,7 @@ public class UserAdd extends ActionBarActivity {
 
             user_lat_editTextView.setText(String.valueOf(shortLat));
             user_long_editTextView.setText(String.valueOf(shortLng));
-            user_pincode_editTextView.setText(incident.getPin_code());
+            user_pincode_editTextView.setText(pin_code);
 
         }
         else{

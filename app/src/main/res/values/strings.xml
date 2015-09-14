@@ -35,4 +35,10 @@
     <string name="title_activity_user_add">UserAdd</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="DebugCity">DebugCity</string>
+    <string name="title_activity_main_tab">MainTabActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_spider_chart">SpiderChartActivity</string>
 </resources>

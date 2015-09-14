@@ -55,7 +55,7 @@ public class WebService {
             jsonObject.put("notes", "note");
             jsonObject.put("votes", 1);
 
-            String url = "http://frrndlease.com/dbctv1/service/SubmitBug";
+            String url = "http://www.frrndlease.com/dbctv1/service/SubmitBug";
             String data = jsonObject.toString();
             String result;
 
@@ -103,7 +103,7 @@ public class WebService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(" ", " ");
 
-            String url = "http://frrndlease.com/dbctv1/service/GetCategories";
+            String url = "http://www.frrndlease.com/dbctv1/service/GetCategories";
             String data = jsonObject.toString();
             String result;
 
@@ -153,7 +153,7 @@ public class WebService {
 
     public List<String> getLocations(){
 
-        String url = "http://frrndlease.com/dbctv1/service/GetLocations";
+        String url = "http://www.frrndlease.com/dbctv1/service/GetLocations";
         List<String> pincodes = new ArrayList<>();
 
         JSONObject jsonObject = new JSONObject();
@@ -228,7 +228,7 @@ public class WebService {
         try {
             jsonObject.put("location", pincode);
 
-            String url = "http://frrndlease.com/dbctv1/service/GetLocationVector";
+            String url = "http://www.frrndlease.com/dbctv1/service/GetLocationVector";
             String data = jsonObject.toString();
             String result;
 //
@@ -298,7 +298,7 @@ public class WebService {
 
             jsonObject.put("token", token);
 
-            String url = "http://frrndlease.com/dbctv1/service/SearchBug";
+            String url = "http://www.frrndlease.com/dbctv1/service/SearchBug";
             String data = jsonObject.toString();
             String result;
 
