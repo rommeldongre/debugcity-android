@@ -1,13 +1,8 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteException;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.SimpleCursorAdapter;
 import android.os.Bundle;
@@ -15,13 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.R;
 
 
 public class CategoryList extends AppCompatActivity {

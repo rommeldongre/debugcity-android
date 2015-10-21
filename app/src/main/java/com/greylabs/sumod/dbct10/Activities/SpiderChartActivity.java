@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,6 +17,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.greylabs.sumod.dbct10.MyMarkerView;
+import com.greylabs.sumod.dbct10.R;
+import com.greylabs.sumod.dbct10.WebService;
 
 import org.json.JSONException;
 import org.json.JSONObject;

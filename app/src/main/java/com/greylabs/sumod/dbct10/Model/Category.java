@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Model;
 
 /**
  * Created by Sumod on 6/3/2015.

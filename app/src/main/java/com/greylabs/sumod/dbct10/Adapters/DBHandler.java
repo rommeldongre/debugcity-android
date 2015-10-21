@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Adapters;
 
 /**
  * Created by Sumod on 6/3/2015.
@@ -13,15 +13,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.greylabs.sumod.dbct10.Model.Category;
+import com.greylabs.sumod.dbct10.Model.Incident;
+import com.greylabs.sumod.dbct10.Model.User;
+import com.greylabs.sumod.dbct10.R;
 
 public class DBHandler extends SQLiteOpenHelper {
+    private static final String TAG = "DBHandler";
 
     //DATABASE VERSION and  NAME :
     private static final int DATABASE_VERSION = 1;
@@ -43,6 +49,17 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String KEY_NAME = "NAME";
     public static final String KEY_DESCRIPTION = "DESCRIPTION";
 
+    //User Table:
+    public static final String TABLE_USERS = "USERS";
+
+    public static final String KEY_EMAIL_ID = "ID";
+    public static final String KEY_FULL_NAME = "FULL_NAME";
+    public static final String KEY_AUTH = "AUTH";
+    public static final String KEY_MOBILE = "MOBILE";
+    public static final String KEY_LOCATION = "LOCATION";
+    public static final String KEY_CREDITS = "CREDITS";
+
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -60,12 +77,21 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_DESCRIPTION + " VARCHAR(255) " + ")";
         db.execSQL(CREATE_TABLE_CATEGORY);
 
+        String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + "("
+                + KEY_EMAIL_ID + " VARCHAR(255) PRIMARY KEY , "
+                + KEY_FULL_NAME + " VARCHAR(255) , "
+                + KEY_AUTH + " VARCHAR(255), "
+                + KEY_MOBILE + " VARCHAR(255), "
+                + KEY_LOCATION + " VARCHAR(255), "
+                + KEY_CREDITS + " INTEGER " + ")";
+        db.execSQL(CREATE_TABLE_USERS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS" + TABLE_INCIDENTS);
         db.execSQL("DROP TABLE IF EXISTS" + TABLE_CATEGORY);
+        db.execSQL("DROP TABLE IF EXISTS" + TABLE_USERS);
 
         onCreate(db);
 
@@ -77,9 +103,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //Delete all tables:
     public void resetDatabase(){
-            SQLiteDatabase db = getWritableDatabase();
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_INCIDENTS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_INCIDENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 
         onCreate(db);
 
@@ -88,6 +115,76 @@ public class DBHandler extends SQLiteOpenHelper {
     //CRUD operations:
 
     //Create a new row:
+
+    public void addUser(User user){
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_EMAIL_ID, user.getEmail_ID());
+            values.put(KEY_FULL_NAME, user.getFull_name());
+            values.put(KEY_AUTH, user.getPassword());
+            values.put(KEY_MOBILE, user.getMobile());
+            values.put(KEY_LOCATION, user.getLocation());
+            values.put(KEY_CREDITS, user.getCredits());
+            db.insert(TABLE_USERS, null, values);
+            db.close();
+        }catch (SQLException e){
+            Log.e(TAG + ": addUser", e.getMessage());
+        }
+    }
+
+    public void updateUser(User user){
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_EMAIL_ID, user.getEmail_ID());
+            values.put(KEY_FULL_NAME, user.getFull_name());
+            values.put(KEY_AUTH, user.getPassword());
+            values.put(KEY_MOBILE, user.getMobile());
+            values.put(KEY_LOCATION, user.getLocation());
+            values.put(KEY_CREDITS, user.getCredits());
+            db.update(TABLE_USERS, values, KEY_EMAIL_ID + "=?", new String[]{user.getEmail_ID()});
+            db.close();
+        }catch (SQLException e){
+            Log.e(TAG + ": addUser", e.getMessage());
+        }
+    }
+
+    public boolean ifUSerExists(String email_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT " + KEY_FULL_NAME + " FROM " + TABLE_USERS + " WHERE " + KEY_EMAIL_ID + "=?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{email_ID});
+        boolean ifUserExists = false;
+        return cursor.moveToFirst();
+    }
+
+    public User getUser(String user_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT " + KEY_EMAIL_ID + ", " + KEY_FULL_NAME + ", "
+                + KEY_AUTH + ", " + KEY_MOBILE + ", " + KEY_LOCATION + ", " + KEY_CREDITS + " FROM "
+                + TABLE_USERS + " WHERE " + KEY_EMAIL_ID + "=?";
+        Cursor cursor = db.rawQuery(query, new String[]{user_ID});
+        cursor.moveToFirst();
+
+        User user = new User();
+        user.setEmail_ID(cursor.getString(cursor.getColumnIndex(KEY_EMAIL_ID)));
+        user.setFull_name(cursor.getString(cursor.getColumnIndex(KEY_FULL_NAME)));
+        user.setPassword(cursor.getString(cursor.getColumnIndex(KEY_AUTH)));
+        user.setLocation(cursor.getString(cursor.getColumnIndex(KEY_LOCATION)));
+        user.setMobile(cursor.getString(cursor.getColumnIndex(KEY_MOBILE)));
+        user.setCredits(cursor.getInt(cursor.getColumnIndex(KEY_CREDITS)));
+        cursor.close();
+        return user;
+    }
+
+    public void deleteUser(String user_ID){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_USERS, KEY_EMAIL_ID + "=?", new String[]{user_ID});
+        db.close();
+    }
+
 
     public void addIncident(Incident incident, Context context) {
         //1
@@ -106,9 +203,6 @@ public class DBHandler extends SQLiteOpenHelper {
         catch(SQLiteException e){
             ShowAlert("Exception Caught", e.getMessage(), context);
         }
-        catch(SQLException e){
-            ShowAlert("Exception Caught", e.getMessage(), context);
-        }
     }
 
     public void addCategory(Category category, Context context) {
@@ -123,9 +217,6 @@ public class DBHandler extends SQLiteOpenHelper {
             db.close();
         }
         catch(SQLiteException e){
-            ShowAlert("Exception Caught", e.getMessage(), context);
-        }
-        catch(SQLException e){
             ShowAlert("Exception Caught", e.getMessage(), context);
         }
     }

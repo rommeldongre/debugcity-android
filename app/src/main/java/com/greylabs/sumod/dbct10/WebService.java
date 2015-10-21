@@ -2,11 +2,13 @@ package com.greylabs.sumod.dbct10;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
+
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.Model.Incident;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,13 +21,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Sumod on 14-Jul-15.

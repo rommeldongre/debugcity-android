@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.greylabs.sumod.dbct10.*;
+import com.greylabs.sumod.dbct10.R;
 
 
 public class MapsActivity extends ActionBarActivity implements LocationListener {
@@ -27,7 +29,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(com.greylabs.sumod.dbct10.R.layout.activity_maps);
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
         googleMap = supportMapFragment.getMap();

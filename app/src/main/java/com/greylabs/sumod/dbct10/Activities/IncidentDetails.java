@@ -1,13 +1,10 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -17,17 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.ActionBarActivity;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.Model.Incident;
+import com.greylabs.sumod.dbct10.R;
+
 import java.util.List;
-import java.util.Locale;
 
 
 public class IncidentDetails extends AppCompatActivity {

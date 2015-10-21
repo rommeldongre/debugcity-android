@@ -1,12 +1,10 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -25,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -44,8 +41,15 @@ import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Highlight;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
-import com.loopj.android.http.RequestParams;
+import com.greylabs.sumod.dbct10.Charts;
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.GPSTracker;
+import com.greylabs.sumod.dbct10.MyMarkerView;
+import com.greylabs.sumod.dbct10.R;
+import com.greylabs.sumod.dbct10.WebService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +61,14 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
+
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
+
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
 
     public static final String TAG = "MainActivity";
     DBHandler db;
@@ -93,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             chart2.setVisibility(View.GONE);
             chart3 = (RadarChart) findViewById(R.id.chart3);
             chart3.setVisibility(View.GONE);
+
 
             super.onPreExecute();
         }

@@ -1,44 +1,32 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.R;
 
-public class CategoryAdd extends AppCompatActivity {
 
+public class AdminMenu extends AppCompatActivity {
     DBHandler db;
-    Button button_save_category;
-    EditText cat_name_editTextView;
-    EditText cat_desc_editTextView;
 
-    public void buttonSaveCategory(View view){
+    public void buttonResetDatabase(View view){
 
         new AlertDialog.Builder(this)
-                .setTitle("Save")
-                .setMessage("Save this Category?")
+                .setTitle("Reset Databases")
+                .setMessage("Delete entire Database?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
-                        Category category = new Category();
-                        category.setName(cat_name_editTextView.getText().toString());
-                        category.setDescription(cat_desc_editTextView.getText().toString());
-                        db.addCategory(category, CategoryAdd.this);
-                        Toast.makeText(CategoryAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
-                        cat_name_editTextView.setText("");
-                        cat_desc_editTextView.setText("");
-
-                        finish();
+                        db.resetDatabase();
+                        Toast.makeText(AdminMenu.this, "DELETED!", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -50,22 +38,19 @@ public class CategoryAdd extends AppCompatActivity {
                 .show();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category_add);
+        setContentView(R.layout.activity_admin_menu);
+        //ShowAlert("Pop up", "OnCreate AdminMenu", "OK");
         db = new DBHandler(this, null, null, 1);
-        button_save_category = (Button) findViewById(R.id.button_save_category);
-        cat_name_editTextView = (EditText) findViewById(R.id.cat_name_editTextView);
-        cat_desc_editTextView = (EditText) findViewById(R.id.cat_desc_editTextView);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_category_add, menu);
+        getMenuInflater().inflate(R.menu.menu_admin_menu, menu);
         return true;
     }
 
@@ -83,4 +68,29 @@ public class CategoryAdd extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void gotoIncidentList(View view){
+        Intent i = new Intent(this, IncidentList.class);
+        startActivity(i);
+    }
+
+    public void gotoCategoryList(View view){
+        Intent i = new Intent(this, CategoryList.class);
+        startActivity(i);
+    }
+
+    public void ShowAlert(String title, String message, String button){
+        AlertDialog alertDialog = new android.app.AlertDialog.Builder(this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(button, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // here you can add functions
+            }
+        });
+        alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
+        alertDialog.show();
+    }
+
+
 }

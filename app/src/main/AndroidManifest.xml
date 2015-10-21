@@ -3,6 +3,8 @@
     package="com.greylabs.sumod.dbct10" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,13 +16,21 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyMaterialTheme" >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
@@ -33,35 +43,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AdminMenu"
+            android:name=".Activities.AdminMenu"
             android:label="@string/title_activity_admin_menu" >
         </activity>
         <activity
-            android:name=".IncidentList"
+            android:name=".Activities.IncidentList"
             android:label="@string/title_activity_incident_list" >
         </activity>
         <activity
-            android:name=".CategoryList"
+            android:name=".Activities.CategoryList"
             android:label="@string/title_activity_category_list" >
         </activity>
         <activity
-            android:name=".IncidentDetails"
+            android:name=".Activities.IncidentDetails"
             android:label="@string/title_activity_incident_details" >
         </activity>
         <activity
-            android:name=".CategoryDetails"
+            android:name=".Activities.CategoryDetails"
             android:label="@string/title_activity_category_details" >
         </activity>
         <activity
-            android:name=".IncidentAdd"
+            android:name=".Activities.IncidentAdd"
             android:label="@string/title_activity_incident_add" >
         </activity>
         <activity
-            android:name=".CategoryAdd"
+            android:name=".Activities.CategoryAdd"
             android:label="@string/title_activity_category_add" >
         </activity>
         <activity
-            android:name=".UserAdd"
+            android:name=".Activities.UserAdd"
             android:label="@string/title_activity_user_add" >
         </activity>
 
@@ -73,16 +83,25 @@
             android:value="AIzaSyDBlgb9nlN0MUPPIz7lJsRW9TOf6fhtUSo" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".Activities.MapsActivity"
             android:label="@string/title_activity_maps" >
         </activity>
         <activity
-            android:name=".MainTabActivity"
-            android:label="@string/title_activity_main_tab" >
+            android:name=".Activities.SpiderChartActivity"
+            android:label="@string/title_activity_spider_chart" >
         </activity>
         <activity
-            android:name=".SpiderChartActivity"
-            android:label="@string/title_activity_spider_chart" >
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
+        </activity>
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:label="@string/title_activity_login" >
+        </activity>
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:label="@string/title_activity_sign_up" >
         </activity>
     </application>
 

@@ -36,9 +36,12 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="DebugCity">DebugCity</string>
     <string name="title_activity_main_tab">MainTabActivity</string>
-
+    <string name="btn_logout_from_google">Logout from Google</string>
+    <string name="btn_revoke_access">Revoke Access</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="title_activity_spider_chart">SpiderChartActivity</string>
+    <string name="title_activity_login">Sign In</string>
+    <string name="title_activity_sign_up">Sign Up</string>
 </resources>

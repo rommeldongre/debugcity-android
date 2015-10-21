@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Model;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.widget.Toast;
+
+import com.greylabs.sumod.dbct10.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
