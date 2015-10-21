@@ -91,14 +91,11 @@
             android:label="@string/title_activity_spider_chart" >
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
-        <activity
-            android:name=".Activities.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
+
         <activity
             android:name=".Activities.SignUpActivity"
             android:label="@string/title_activity_sign_up" >

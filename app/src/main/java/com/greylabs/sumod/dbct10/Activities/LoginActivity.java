@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else{
             progressDialog.dismiss();
             ShowAlert("User not Registered", "No user with the entered Email exists. Please Register as a User or enter a different Email", this);
-            _loginButton.setEnabled(false);
+            _loginButton.setEnabled(true);
         }
 
 
