@@ -17,6 +17,11 @@ public class User {
     public User() {
     }
 
+    public User(String email_ID, String full_name) {
+        this.email_ID = email_ID;
+        this.full_name = full_name;
+    }
+
     public User(String email_ID, String full_name, String password) {
         this.email_ID = email_ID;
         this.full_name = full_name;

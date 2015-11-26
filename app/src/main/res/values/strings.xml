@@ -13,6 +13,7 @@
     <string name="key_description">DESCRIPTION</string>
     <string name="lat">Lat:</string>
     <string name="Long">Long:</string>
+    <string name="logout">Logout</string>
     <string name="title_activity_admin_menu">AdminMenu</string>
     <string name="title_activity_incident_list">IncidentList</string>
     <string name="title_activity_category_list">CategoryList</string>
@@ -25,6 +26,7 @@
     <string name="get_location">Get Location</string>
     <string name="map">Map</string>
     <string name="shoot">Shoot</string>
+    <string name="sign_in_with_google">Sign In with Google</string>
     <string name="photo">Photo</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="title_activity_incident_details">IncidentDetails</string>
@@ -44,4 +46,6 @@
     <string name="title_activity_spider_chart">SpiderChartActivity</string>
     <string name="title_activity_login">Sign In</string>
     <string name="title_activity_sign_up">Sign Up</string>
+
+    <string name="facebook_app_id">1638048859787444</string>
 </resources>

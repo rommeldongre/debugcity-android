@@ -1,4 +1,4 @@
-package com.greylabs.sumod.dbct10;
+package com.greylabs.sumod.dbct10.Activities;
 
 /**
  * Created by Sumod on 20-Jul-15.
@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.greylabs.sumod.dbct10.Activities.LoginActivity;
-import com.greylabs.sumod.dbct10.Activities.MainActivity;
+import com.greylabs.sumod.dbct10.R;
+
 public class SplashScreen extends Activity {
 
     // Splash screen timer
@@ -31,7 +31,7 @@ public class SplashScreen extends Activity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                Intent i = new Intent(SplashScreen.this, LoginActivity.class);
+                Intent i = new Intent(SplashScreen.this, ActivityLogin.class);
                 startActivity(i);
 
                 // close this activity

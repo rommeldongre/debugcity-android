@@ -9,4 +9,10 @@
         android:title="@string/map">
     </item>
 
+    <item
+        android:id="@+id/btn_logout"
+        android:title="@string/logout">
+    </item>
+
+
 </menu>

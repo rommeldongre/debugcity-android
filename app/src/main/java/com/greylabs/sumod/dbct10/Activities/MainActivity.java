@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.facebook.login.LoginManager;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -41,13 +43,18 @@ import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Highlight;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.greylabs.sumod.dbct10.Charts;
 import com.greylabs.sumod.dbct10.Adapters.DBHandler;
 import com.greylabs.sumod.dbct10.GPSTracker;
 import com.greylabs.sumod.dbct10.MyMarkerView;
+import com.greylabs.sumod.dbct10.PrefManager;
 import com.greylabs.sumod.dbct10.R;
 import com.greylabs.sumod.dbct10.WebService;
 
@@ -61,7 +68,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
     /* Request code used to invoke sign in user interactions. */
@@ -71,6 +78,8 @@ public class MainActivity extends AppCompatActivity{
     private GoogleApiClient mGoogleApiClient;
 
     public static final String TAG = "MainActivity";
+    private Toolbar mToolbar;
+    private PrefManager pref;
     DBHandler db;
     ListView mainListView;
     ViewFlipper viewFlipper;
@@ -178,7 +187,21 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        //RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout)
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        pref = new PrefManager(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .build();
+
+        // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         db = new DBHandler(this, null, null, 1);
 
@@ -258,7 +281,48 @@ public class MainActivity extends AppCompatActivity{
             startActivity(i);
         }
 
+        if (id == R.id.btn_logout){
+
+            if (pref.getLoginSessionCode() == pref.EMAIL_LOGIN_SESSION){
+                logoutWithEmail();
+            }
+            else if(pref.getLoginSessionCode() == pref.GOOGLE_LOGIN_SESSION){
+                logoutWithGoogle();
+            }
+            else if (pref.getLoginSessionCode() == pref.FB_LOGIN_SESSION){
+                logoutWtihFacebook();
+            }
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logoutWithEmail(){
+        pref.logout();
+        Intent i = new Intent(MainActivity.this, ActivityLogin.class);
+        startActivity(i);
+        finish();
+    }
+
+    private void logoutWithGoogle(){
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        pref.logout();
+                        Intent i = new Intent(MainActivity.this, ActivityLogin.class);
+                        startActivity(i);
+                        finish();
+                    }
+                });
+    }
+
+    private void logoutWtihFacebook(){
+        LoginManager.getInstance().logOut();
+        pref.logout();
+        Intent i = new Intent(MainActivity.this, ActivityLogin.class);
+        startActivity(i);
+        finish();
     }
 
     @Override
@@ -280,6 +344,11 @@ public class MainActivity extends AppCompatActivity{
             i.putExtra("resultCode", SELECT_PICTURE);
             startActivity(i);
         }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 
     private boolean hasCamera() {

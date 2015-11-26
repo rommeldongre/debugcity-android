@@ -1,4 +1,5 @@
 package com.greylabs.sumod.dbct10.Activities;
+/*
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * A flag indicating that a PendingIntent is in progress and prevents us
      * from starting further intents.
-     */
+     *//*
     private boolean mIntentInProgress;
 
     private boolean mSignInClicked;
@@ -52,13 +53,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ConnectionResult mConnectionResult;
 
     DBHandler db;
-    private SignInButton btnSignIn;
+    private SignInButton btnSignIn;*/
 
-    @InjectView(R.id.input_email) EditText _emailText;
-    @InjectView(R.id.input_password) EditText _passwordText;
-    @InjectView(R.id.btn_login) Button _loginButton;
-    @InjectView(R.id.link_signup) TextView _signupLink;
-
+    //@InjectView(R.id.input_email) EditText _emailText;
+    //@InjectView(R.id.input_password) EditText _passwordText;
+    //@InjectView(R.id.btn_login) Button _loginButton;
+    //@InjectView(R.id.link_signup) TextView _signupLink;
+/*
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +157,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * Button on click listener
      * */
+
+/*
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -228,6 +231,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * Updating the UI, showing/hiding buttons and profile layout
      * */
+/*
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
             btnSignIn.setVisibility(View.GONE);
@@ -235,20 +239,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             btnSignIn.setVisibility(View.VISIBLE);
         }
     }
-
+/*
     /**
      * Sign-in into google
-     * */
+     * *//*
     private void signInWithGplus() {
         if (!mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
             resolveSignInError();
         }
-    }
+    }/*
 
     /**
      * Method to resolve any signin errors
-     * */
+     * *//*
     private void resolveSignInError() {
         if (mConnectionResult.hasResolution()) {
             try {
@@ -264,8 +268,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Fetching user's information name, email, profile pic
-     * */
-    private void getProfileInformation() {
+     * *//*
+    //private void getProfileInformation() {
         try {
             if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
@@ -352,3 +356,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         alertDialog.show();
     }
 }
+
+*/
