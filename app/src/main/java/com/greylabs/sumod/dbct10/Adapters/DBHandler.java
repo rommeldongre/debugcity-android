@@ -556,5 +556,25 @@ public class DBHandler extends SQLiteOpenHelper {
     }
     */
 
+    public ArrayList<Incident> getAllIncidentsByList(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Incident> incidentArrayList = new ArrayList<>();
+        Cursor cursor = db.query(TABLE_INCIDENTS, new String[]{KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_IMAGE, KEY_CATEGORY}, null, null, null, null, null);
+        cursor.moveToFirst();
+
+        for (int i=0; i<cursor.getCount(); i++){
+            Incident incident = new Incident();
+            incident.set_id(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+            incident.setLatitude(cursor.getLong(cursor.getColumnIndex(KEY_LATITUDE)));
+            incident.setLongitude(cursor.getLong(cursor.getColumnIndex(KEY_LONGITUDE)));
+            incident.setImage(getByteArrayAsBitmap(cursor.getBlob(cursor.getColumnIndex(KEY_IMAGE))));
+            incident.setCategory(cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+            incidentArrayList.add(incident);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        return incidentArrayList;
+    }
 
 }

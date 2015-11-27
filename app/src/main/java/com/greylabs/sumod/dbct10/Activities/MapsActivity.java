@@ -15,20 +15,32 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.greylabs.sumod.dbct10.*;
+import com.greylabs.sumod.dbct10.Adapters.DBHandler;
+import com.greylabs.sumod.dbct10.Model.Incident;
 import com.greylabs.sumod.dbct10.R;
+
+import java.util.ArrayList;
 
 
 public class MapsActivity extends ActionBarActivity implements LocationListener {
 
     GoogleMap googleMap;
     GPSTracker gps = new GPSTracker(this);
+    private static final String TAG = "MapsActivity";
+    private WebService webService;
+    private DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        db = new DBHandler(this, null, null, 1);
+
         setContentView(com.greylabs.sumod.dbct10.R.layout.activity_maps);
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
@@ -37,11 +49,19 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(bestProvider);
-        if (location != null) {
-            onLocationChanged(location);
+        try{
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            if (location != null) {
+                onLocationChanged(location);
+            }
+            locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        }catch (SecurityException e){
+            e.printStackTrace();
         }
-        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+
+        overlayIncidentsOnMap();
+        addMarker(new LatLng(19.026348, 72.839571));
+
     }
 
 
@@ -124,14 +144,19 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     /**
      * Adds a marker to the map
      */
-    private void addMarker(){
+    private void addMarker(LatLng latLng){
+
+        Log.i(TAG, String.valueOf(latLng.latitude) + "|" + String.valueOf(latLng.longitude));
+
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.greendot);
 
         /** Make sure that the map has been initialised **/
         if(null != googleMap){
             googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(0, 0))
+                            .position(latLng)
                             .title("Marker")
                             .draggable(true)
+                            .icon(icon)
             );
         }
     }
@@ -147,5 +172,14 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         });
         alertDialog.setIcon(R.drawable.abc_dialog_material_background_dark);
         alertDialog.show();
+    }
+
+    public void overlayIncidentsOnMap(){
+        ArrayList<Incident> incidents = db.getAllIncidentsByList();
+
+        for (int i = 0; i<incidents.size(); i++){
+            addMarker(new LatLng(incidents.get(i).getLatitude(), incidents.get(i).getLongitude()));
+            Log.i(TAG, String.valueOf(incidents.get(i).getLatitude()) + "|" + String.valueOf(incidents.get(i).getLongitude()));
+        }
     }
 }

@@ -281,6 +281,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             startActivity(i);
         }
 
+        if (id == R.id.admin){
+            Intent i = new Intent(this, AdminMenu.class);
+            startActivity(i);
+        }
+
         if (id == R.id.btn_logout){
 
             if (pref.getLoginSessionCode() == pref.EMAIL_LOGIN_SESSION){

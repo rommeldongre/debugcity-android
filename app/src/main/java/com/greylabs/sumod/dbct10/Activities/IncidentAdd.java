@@ -95,8 +95,8 @@ public class IncidentAdd extends AppCompatActivity {
                         incident.setLongitude(Double.valueOf(inc_long_editTextView.getText().toString()));
                         incident.setCategory(spinner_category.getSelectedItem().toString());
                         incident.setPin_code(IncidentAdd.this);
-                        bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
-                        incident.setImage(bitmap);
+                        //bitmap = ((BitmapDrawable)inc_imageView.getDrawable()).getBitmap();
+                        //incident.setImage(bitmap);
                         db.addIncident(incident, IncidentAdd.this);
                         Toast.makeText(IncidentAdd.this, "SAVED", Toast.LENGTH_SHORT).show();
                         inc_lat_editTextView.setText("");
