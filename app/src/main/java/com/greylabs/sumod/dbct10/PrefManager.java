@@ -27,6 +27,8 @@ public class PrefManager {
     private static final String IS_LOGIN = "IsLoggedIn";
 
     // Email address (make variable public to access from outside)
+    public static final String KEY_NAME = "name";
+
     public static final String KEY_EMAIL = "email";
 
     public static final String LOGIN_SESSION_CODE = "login_session_code";
@@ -49,9 +51,12 @@ public class PrefManager {
     /**
      * Create login session
      */
-    public void createLoginSession(String email, int loginSessionCode) {
+    public void createLoginSession(String person_name, String email, int loginSessionCode) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
+
+        // Storing name in pref
+        editor.putString(KEY_NAME, person_name);
 
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
@@ -72,8 +77,14 @@ public class PrefManager {
     }
 
 
+
+
     public String getEmail() {
         return pref.getString(KEY_EMAIL, null);
+    }
+
+    public String getName() {
+        return pref.getString(KEY_NAME, null);
     }
 
     public boolean isLoggedIn() {

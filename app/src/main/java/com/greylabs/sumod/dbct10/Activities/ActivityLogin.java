@@ -60,8 +60,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+//import butterknife.ButterKnife;
+//import butterknife.InjectView;
 
 public class ActivityLogin extends AppCompatActivity implements OnConnectionFailedListener, View.OnClickListener {
 
@@ -91,7 +91,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
 
         pref = new PrefManager(this);
         if (pref.isLoggedIn()){
-            Intent i = new Intent(ActivityLogin.this, MainActivity.class);
+            Intent i = new Intent(ActivityLogin.this, StartActivity.class);
             startActivity(i);
             finish();
         }
@@ -146,12 +146,12 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                                     if (object.has("email")){
                                         String email = object.getString("email");
                                         user.setEmail_ID(email);
-                                        pref.createLoginSession(email, pref.FB_LOGIN_SESSION);
+                                        pref.createLoginSession(object.getString("name"),email, pref.FB_LOGIN_SESSION);
                                         user.setFull_name(object.getString("name"));
                                         user.setLocation(object.getJSONObject("location").getString("name"));
                                         db.addUser(user);
 
-                                        Intent i = new Intent(ActivityLogin.this, MainActivity.class);
+                                        Intent i = new Intent(ActivityLogin.this, StartActivity.class);
                                         startActivity(i);
                                         finish();
                                     }else {
@@ -248,11 +248,11 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
         if(db.ifUSerExists(email)){
             User user = db.getUser(email);
             if (user.getPassword().equals(password)) {
-                pref.createLoginSession(email, pref.EMAIL_LOGIN_SESSION);
+                pref.createLoginSession(user.getFull_name(), email, pref.EMAIL_LOGIN_SESSION);
                 Snackbar snackbar = Snackbar
                         .make(linearLayout, "Welcome to DebugCity!", Snackbar.LENGTH_LONG);
                 snackbar.show();
-                Intent intent = new Intent(ActivityLogin.this, MainActivity.class);
+                Intent intent = new Intent(ActivityLogin.this, StartActivity.class);
                 intent.putExtra("user_name", user.getFull_name());
                 startActivity(intent);
                 finish();
@@ -331,10 +331,10 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
                 // Get account information
-                pref.createLoginSession(acct.getEmail(), pref.GOOGLE_LOGIN_SESSION);
+                pref.createLoginSession(acct.getDisplayName(), acct.getEmail(), pref.GOOGLE_LOGIN_SESSION);
                 User user = new User(acct.getEmail(), acct.getDisplayName());
                 db.addUser(user);
-                Intent i = new Intent(ActivityLogin.this, MainActivity.class);
+                Intent i = new Intent(ActivityLogin.this, StartActivity.class);
                 startActivity(i);
                 finish();
 

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/MaterialDesignLibraryTheme">
         <!-- Customize your theme here. -->
     </style>
 
@@ -9,7 +9,7 @@
 
     </style>
 
-    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="MyMaterialTheme.Base" parent="@style/MaterialDesignLibraryTheme">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
