@@ -4,11 +4,13 @@
     <string name="button_addIncident">Add</string>
     <string name="button_addCategory">Add</string>
     <string name="hello_world">Hello world!</string>
+    <string name="add_incident">Add Incident</string>
     <string name="action_settings">Settings</string>
     <string name="key_id">ID</string>
     <string name="key_latitude">LATITUDE</string>
     <string name="key_longitude">LONGITUDE</string>
     <string name="key_category">CATEGORY</string>
+    <string name="charts">Charts</string>
     <string name="key_name">NAME</string>
     <string name="key_description">DESCRIPTION</string>
     <string name="lat">Lat:</string>
@@ -49,4 +51,5 @@
 
     <string name="facebook_app_id">1638048859787444</string>
     <string name="title_activity_start">StartActivity</string>
+    <string name="title_activity_activity_start">ActivityStart</string>
 </resources>

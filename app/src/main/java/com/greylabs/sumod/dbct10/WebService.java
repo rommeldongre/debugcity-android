@@ -47,7 +47,7 @@ public class WebService {
             jsonObject.put("cat", incident.getCategory());
             jsonObject.put("pic", encodeTobase64(incident.getImage()));
             jsonObject.put("locality", incident.getPin_code());
-            jsonObject.put("submitter", "not defined");
+            jsonObject.put("submitter", incident.getSubmitter());
             jsonObject.put("owner", "not defined");
             jsonObject.put("state", "not defined");
             jsonObject.put("severity", 3);

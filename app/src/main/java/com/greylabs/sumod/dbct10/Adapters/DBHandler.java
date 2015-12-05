@@ -126,7 +126,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_MOBILE, user.getMobile());
             values.put(KEY_LOCATION, user.getLocation());
             values.put(KEY_CREDITS, user.getCredits());
-            db.insert(TABLE_USERS, null, values);
+            db.insertWithOnConflict(TABLE_USERS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             db.close();
         }catch (SQLException e){
             Log.e(TAG + ": addUser", e.getMessage());

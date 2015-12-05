@@ -9,10 +9,13 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+
+import android.provider.Settings.Secure;
 
 import android.content.Intent;
 import android.view.View;
@@ -66,7 +69,7 @@ import java.util.ArrayList;
 public class ActivityLogin extends AppCompatActivity implements OnConnectionFailedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 0;
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "ActivityLogin";
 
     Button btn_logIn;
     EditText input_email;
@@ -145,8 +148,11 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                                     User user = new User();
                                     if (object.has("email")){
                                         String email = object.getString("email");
+
                                         user.setEmail_ID(email);
-                                        pref.createLoginSession(object.getString("name"),email, pref.FB_LOGIN_SESSION);
+
+                                        pref.createLoginSession(object.getString("name"),email, pref.FB_LOGIN_SESSION, Secure.getString(getApplicationContext().getContentResolver(),
+                                                Secure.ANDROID_ID));
                                         user.setFull_name(object.getString("name"));
                                         user.setLocation(object.getJSONObject("location").getString("name"));
                                         db.addUser(user);
@@ -248,7 +254,8 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
         if(db.ifUSerExists(email)){
             User user = db.getUser(email);
             if (user.getPassword().equals(password)) {
-                pref.createLoginSession(user.getFull_name(), email, pref.EMAIL_LOGIN_SESSION);
+                pref.createLoginSession(user.getFull_name(), email, pref.EMAIL_LOGIN_SESSION, Secure.getString(getApplicationContext().getContentResolver(),
+                        Secure.ANDROID_ID));
                 Snackbar snackbar = Snackbar
                         .make(linearLayout, "Welcome to DebugCity!", Snackbar.LENGTH_LONG);
                 snackbar.show();
@@ -331,7 +338,8 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
                 // Get account information
-                pref.createLoginSession(acct.getDisplayName(), acct.getEmail(), pref.GOOGLE_LOGIN_SESSION);
+                pref.createLoginSession(acct.getDisplayName(), acct.getEmail(), pref.GOOGLE_LOGIN_SESSION, Secure.getString(getApplicationContext().getContentResolver(),
+                        Secure.ANDROID_ID));
                 User user = new User(acct.getEmail(), acct.getDisplayName());
                 db.addUser(user);
                 Intent i = new Intent(ActivityLogin.this, StartActivity.class);

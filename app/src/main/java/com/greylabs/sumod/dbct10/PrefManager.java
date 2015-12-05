@@ -31,6 +31,8 @@ public class PrefManager {
 
     public static final String KEY_EMAIL = "email";
 
+    public static final String KEY_DEVICE_ID = "device_id";
+
     public static final String LOGIN_SESSION_CODE = "login_session_code";
 
     public final int EMAIL_LOGIN_SESSION = 0;
@@ -51,7 +53,7 @@ public class PrefManager {
     /**
      * Create login session
      */
-    public void createLoginSession(String person_name, String email, int loginSessionCode) {
+    public void createLoginSession(String person_name, String email, int loginSessionCode, String device_id) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -63,6 +65,9 @@ public class PrefManager {
 
         //Storing login session code
         editor.putInt(LOGIN_SESSION_CODE, loginSessionCode);
+
+        //Storing Device ID
+        editor.putString(KEY_DEVICE_ID, device_id);
 
         // commit changes
         editor.commit();
@@ -77,7 +82,13 @@ public class PrefManager {
     }
 
 
+    public void putDeviceID(String device_id){
+        editor.putString(KEY_DEVICE_ID, device_id);
+    }
 
+    public String getDeviceID(){
+        return pref.getString(KEY_DEVICE_ID, null);
+    }
 
     public String getEmail() {
         return pref.getString(KEY_EMAIL, null);

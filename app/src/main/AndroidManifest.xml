@@ -87,9 +87,11 @@
             android:label="@string/title_activity_user_add" >
         </activity>
 
-        <meta-data
+        <!--
+            <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDBlgb9nlN0MUPPIz7lJsRW9TOf6fhtUSo" />
@@ -102,11 +104,13 @@
             android:name=".Activities.SpiderChartActivity"
             android:label="@string/title_activity_spider_chart" >
         </activity>
-        <!--<activity
+        <!--
+        <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name=".Activities.SignUpActivity"
             android:label="@string/title_activity_sign_up" >
@@ -114,6 +118,10 @@
         <activity
             android:name=".Activities.StartActivity"
             android:label="@string/title_activity_start" >
+        </activity>
+        <activity
+            android:name=".Activities.ActivityStart"
+            android:label="@string/title_activity_activity_start" >
         </activity>
     </application>
 

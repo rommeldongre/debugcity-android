@@ -103,7 +103,10 @@ public class ActivityStart extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-        navigationView.setCheckedItem(R.id.charts);
+        ChartsViewPagerFragment chartsViewPagerFragment = new ChartsViewPagerFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame, chartsViewPagerFragment);
+        fragmentTransaction.commit();
 
 
         // Initializing Drawer Layout and ActionBarToggle

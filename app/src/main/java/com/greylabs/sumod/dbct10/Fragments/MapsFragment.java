@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 /**
  * Created by Sumod on 03-Dec-15.
  */
-public class MapsFragment extends Fragment implements LocationListener {
+public class MapsFragment extends SupportMapFragment implements LocationListener, OnMapReadyCallback {
 
     GoogleMap googleMap;
     GPSTracker gps = new GPSTracker(getActivity());
@@ -45,29 +46,22 @@ public class MapsFragment extends Fragment implements LocationListener {
         return inflater.inflate(R.layout.activity_maps, container, false);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getMapAsync(this);
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         db = new DBHandler(getActivity(), null, null, 1);
 
-        SupportMapFragment supportMapFragment =
+        /*SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.googleMap);
-        googleMap = supportMapFragment.getMap();
-        googleMap.setMyLocationEnabled(true);
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-        try{
-            Location location = locationManager.getLastKnownLocation(bestProvider);
-            if (location != null) {
-                onLocationChanged(location);
-            }
-            locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
-        }catch (SecurityException e){
-            e.printStackTrace();
-        }
+        supportMapFragment.getMapAsync(this);*/
 
-        overlayIncidentsOnMap();
+
     }
 
     @Override
@@ -125,4 +119,23 @@ public class MapsFragment extends Fragment implements LocationListener {
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public void onMapReady(GoogleMap gMap) {
+        googleMap = gMap;
+        googleMap.setMyLocationEnabled(true);
+        overlayIncidentsOnMap();
+
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String bestProvider = locationManager.getBestProvider(criteria, true);
+        try{
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            if (location != null) {
+                onLocationChanged(location);
+            }
+            locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+    }
 }

@@ -11,6 +11,7 @@ import com.greylabs.sumod.dbct10.Fragments.Charts.SpiderChartFragment;
 public class ChartsViewPagerFragment extends com.blunderer.materialdesignlibrary.fragments.ViewPagerFragment {
 
 
+
     @Override
     public ViewPagerHandler getViewPagerHandler() {
         return new ViewPagerHandler(getActivity())
@@ -22,12 +23,12 @@ public class ChartsViewPagerFragment extends com.blunderer.materialdesignlibrary
 
     @Override
     public boolean showViewPagerIndicator() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean replaceActionBarTitleByViewPagerPageTitle() {
-        return false;
+        return true;
     }
 
     @Override

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.greylabs.sumod.dbct10.Adapters.DBHandler;
 import com.greylabs.sumod.dbct10.GPSTracker;
 import com.greylabs.sumod.dbct10.Model.Incident;
+import com.greylabs.sumod.dbct10.PrefManager;
 import com.greylabs.sumod.dbct10.R;
 import com.greylabs.sumod.dbct10.WebService;
 
@@ -79,6 +80,12 @@ public class UserAdd extends ActionBarActivity {
                         incident.setLongitude(longitude);
                         incident.setCategory(spinner.getSelectedItem().toString());
 
+                        if (new PrefManager(getApplicationContext()).getEmail() != null) {
+                            incident.setSubmitter(new PrefManager(getApplicationContext()).getEmail());
+                        }
+                        else {
+                            incident.setSubmitter(new PrefManager(getApplicationContext()).getDeviceID());
+                        }
                         incident.setPin_code(pin_code);
                         Toast.makeText(UserAdd.this, incident.getPin_code(), Toast.LENGTH_LONG).show();
                         bitmap = ((BitmapDrawable)user_imageView.getDrawable()).getBitmap();

@@ -26,6 +26,7 @@ public class Incident {
     private String category;
     private Bitmap image;
     private String pin_code = "Unknown";
+    private String submitter;
 
     //Constructors:
 
@@ -98,6 +99,10 @@ public class Incident {
         return pin_code;
     }
 
+    public String getSubmitter() {
+        return submitter;
+    }
+
     //Setters:
 
     public void set_id(int _id) {
@@ -141,6 +146,10 @@ public class Incident {
             e.printStackTrace();
         }
 
+    }
+
+    public void setSubmitter(String submitter) {
+        this.submitter = submitter;
     }
 
     public void ShowAlert(String title, String message, Context context) {
