@@ -72,9 +72,9 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
     private static final String TAG = "ActivityLogin";
 
     Button btn_logIn;
-    EditText input_email;
-    EditText input_password;
-    TextView signUp_link;
+//    EditText input_email;
+//    EditText input_password;
+//    TextView signUp_link;
     DBHandler db;
     PrefManager pref;
     Snackbar snackbar;
@@ -102,13 +102,13 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
         db = new DBHandler(this, null, null, 1);
 
         btn_logIn = (Button) findViewById(R.id.button_logIn);
-        input_email = (EditText) findViewById(R.id.input_email);
-        input_password = (EditText) findViewById(R.id.input_password);
-        signUp_link = (TextView) findViewById(R.id.link_signup);
+//        input_email = (EditText) findViewById(R.id.input_email);
+//        input_password = (EditText) findViewById(R.id.input_password);
+//        signUp_link = (TextView) findViewById(R.id.link_signup);
         linearLayout = (LinearLayout) findViewById(R.id.activity_login_linearLayout);
 
         btn_logIn.setOnClickListener(this);
-        signUp_link.setOnClickListener(this);
+//        signUp_link.setOnClickListener(this);
 
         // Configure sign-in to request the user's ID, email address, and basic profile. ID and
         // basic profile are included in DEFAULT_SIGN_IN.
@@ -201,12 +201,13 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                 break;
 
             case R.id.button_logIn:
-                LoginwithEmail();
+                //LoginwithEmail();
+                loginAsGuest();
                 break;
 
-            case R.id.link_signup:
+            /*case R.id.link_signup:
                 SignUpLink();
-                break;
+                break;*/
         }
     }
 
@@ -234,19 +235,30 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
             textView.setTextColor(Color.YELLOW);
             snackbar.show();
 
-        } else if (!TextUtils.isEmpty(input_email.getText())) {
+        } /*else if (!TextUtils.isEmpty(input_email.getText())) {
             input_password.setError("Enter a password");
         } else if(input_password.getText().toString().length() < 8){
             input_password.setError("Password must contatain minimum 8 characters");
         } else if (!TextUtils.isEmpty(input_email.getText()) && android.util.Patterns.EMAIL_ADDRESS.matcher(input_email.getText()).matches()) {
             input_email.setError("Enter a valid email");
-        } else {
-            login();
+        }*/ else {
+            //login();
         }
 
     }
 
-    public void login(){
+    private void loginAsGuest(){
+
+        String android_id = Secure.getString(getApplicationContext().getContentResolver(),
+                Secure.ANDROID_ID);
+
+        pref.putDeviceID(android_id);
+        Intent i = new Intent(ActivityLogin.this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    /*public void login(){
         String email = input_email.getText().toString();
         String password = input_password.getText().toString();
         btn_logIn.setEnabled(false);
@@ -298,7 +310,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
             btn_logIn.setEnabled(true);
 
         }
-    }
+    }*/
 
     public void SignUpLink(){
         Intent intent = new Intent(ActivityLogin.this, SignUpActivity.class);

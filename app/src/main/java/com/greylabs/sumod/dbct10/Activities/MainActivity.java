@@ -296,6 +296,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             else if (pref.getLoginSessionCode() == pref.FB_LOGIN_SESSION){
                 logoutWtihFacebook();
+            }else{
+                pref.logout();
+                Intent i = new Intent(MainActivity.this, ActivityLogin.class);
+                startActivity(i);
+                finish();
             }
         }
 
