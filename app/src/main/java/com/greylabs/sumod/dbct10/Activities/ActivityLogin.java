@@ -94,7 +94,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
 
         pref = new PrefManager(this);
         if (pref.isLoggedIn()){
-            Intent i = new Intent(ActivityLogin.this, StartActivity.class);
+            Intent i = new Intent(ActivityLogin.this, MainActivity.class);
             startActivity(i);
             finish();
         }
@@ -157,7 +157,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                                         user.setLocation(object.getJSONObject("location").getString("name"));
                                         db.addUser(user);
 
-                                        Intent i = new Intent(ActivityLogin.this, StartActivity.class);
+                                        Intent i = new Intent(ActivityLogin.this, MainActivity.class);
                                         startActivity(i);
                                         finish();
                                     }else {
@@ -259,7 +259,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                 Snackbar snackbar = Snackbar
                         .make(linearLayout, "Welcome to DebugCity!", Snackbar.LENGTH_LONG);
                 snackbar.show();
-                Intent intent = new Intent(ActivityLogin.this, StartActivity.class);
+                Intent intent = new Intent(ActivityLogin.this, MainActivity.class);
                 intent.putExtra("user_name", user.getFull_name());
                 startActivity(intent);
                 finish();
@@ -342,7 +342,7 @@ public class ActivityLogin extends AppCompatActivity implements OnConnectionFail
                         Secure.ANDROID_ID));
                 User user = new User(acct.getEmail(), acct.getDisplayName());
                 db.addUser(user);
-                Intent i = new Intent(ActivityLogin.this, StartActivity.class);
+                Intent i = new Intent(ActivityLogin.this, MainActivity.class);
                 startActivity(i);
                 finish();
 
